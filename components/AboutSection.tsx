@@ -20,8 +20,8 @@ export default function AboutSection() {
   ];
 
   const learningPoints = [
-    'Eager learner and excited to learn emerging AI architectures, deep learning patterns, computer vision, and scalable system design.',
-    'Translates academic literature and benchmark datasets (ISRO LiDAR, Geofabrik OSM, Amazon ML) into reproducible production pipelines.',
+    'Eager learner who is always excited to learn emerging AI architectures, autonomous systems, and scalable software design.',
+    'Translates complex technical challenges and benchmark datasets into reproducible production pipelines, autonomous workflows, and high-throughput APIs.',
     'Combines competitive programming rigor with cross-functional teamwork and agile product execution.',
   ];
 

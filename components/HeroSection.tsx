@@ -198,23 +198,23 @@ export default function HeroSection() {
   const pillars = [
     {
       icon: <Compass size={16} className="text-emerald-400" />,
-      title: 'Eager & Curious Learner',
-      desc: 'Always excited to learn emerging architectures, dissect research papers, and turn complex theory into working code.',
+      title: 'Eager & Adaptable Learner',
+      desc: 'An eager learner who is always excited to learn emerging tech stacks, explore new paradigms, and quickly turn theory into clean, production-ready code.',
     },
     {
       icon: <Sparkles size={16} className="text-cyan-400" />,
-      title: 'Computer Vision & 3D AI',
-      desc: 'Reconstructing dense 3D elevation models from single-view satellite imagery and automated cadastral segmentation.',
+      title: 'Applied AI & Computer Vision',
+      desc: 'Designing deep convolutional and transformer models for visual perception, feature extraction, and real-time inference.',
     },
     {
       icon: <Cpu size={16} className="text-blue-400" />,
-      title: 'AI/ML & Deep Learning Systems',
-      desc: 'Engineering deep learning pipelines for satellite elevation modeling (1.41m MAE) and automated cadastral mapping.',
+      title: 'Intelligent Automation & MLOps',
+      desc: 'Engineering autonomous execution workflows, distributed model pipelines, and automated end-to-end data processing systems.',
     },
     {
       icon: <Layers size={16} className="text-violet-400" />,
-      title: 'Full-Stack Execution',
-      desc: 'Bridging distributed PyTorch & Scikit-Learn models with fast, type-safe FastAPI backends and interactive React interfaces.',
+      title: 'Full-Stack Engineering',
+      desc: 'Architecting high-performance backends with Python & FastAPI, paired with modern, responsive React/Next.js interfaces.',
     },
   ];
 
@@ -240,7 +240,7 @@ export default function HeroSection() {
           className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-white/15 bg-white/[0.05] text-xs font-medium text-gray-200 mb-8 backdrop-blur-md shadow-[0_0_24px_rgba(59,130,246,0.18)]"
         >
           <Sparkles size={14} className="text-brand-accent animate-pulse" />
-          <span>AI/ML Systems · Computer Vision · Eager Learner</span>
+          <span>AI/ML Systems · Intelligent Automation · Full-Stack Engineering</span>
         </motion.div>
 
         <motion.h1
@@ -258,7 +258,7 @@ export default function HeroSection() {
           transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.16 }}
           className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-gradient"
         >
-          AI &amp; ML Engineer · Full-Stack Builder
+          AI/ML Engineer · Intelligent Automation &amp; Full-Stack Builder
         </motion.h2>
 
         <motion.p
@@ -267,7 +267,7 @@ export default function HeroSection() {
           transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.24 }}
           className="text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10 text-base md:text-lg"
         >
-          Computer Science undergraduate at Bennett University driven by a deep curiosity for how intelligent systems perceive, reason, and model the physical world. As an <span className="text-white font-semibold">eager learner who is always excited to learn</span> new technologies, I love diving into unfamiliar domains—from reconstructing 3D Digital Surface Models from single-view satellite imagery to architecting distributed computer vision systems and end-to-end MLOps pipelines.
+          Computer Science undergraduate at Bennett University passionate about building scalable software, autonomous systems, and applied machine learning. As an <span className="text-white font-semibold">eager learner who is always excited to learn</span> new technologies, I focus on translating complex algorithmic concepts into robust production applications—from end-to-end MLOps pipelines and intelligent automation to distributed full-stack architectures and computer vision systems.
         </motion.p>
 
         <motion.div
