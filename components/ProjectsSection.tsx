@@ -459,110 +459,266 @@ const CITY_BUILDINGS = [
 
 const TILE = 36;
 
-function Building({ col, row, h }: { col: number; row: number; h: number }) {
+function Building({
+  col,
+  row,
+  h,
+  mode,
+}: {
+  col: number;
+  row: number;
+  h: number;
+  mode: 'dsm' | 'lidar' | 'rgb' | 'ramp';
+}) {
   const half = TILE / 2;
   const qtr  = TILE / 4;
 
   const gx = (col - row) * half;
   const gy = (col + row) * qtr;
 
-  const bright = Math.max(0.45, 1 - (col + row) * 0.05);
-  const topCol   = `rgba(${Math.round(170*bright)},${Math.round(195*bright)},${Math.round(230*bright)},0.95)`;
-  const leftCol  = `rgba(${Math.round(45*bright)},${Math.round(68*bright)},${Math.round(102*bright)},0.95)`;
-  const rightCol = `rgba(${Math.round(75*bright)},${Math.round(105*bright)},${Math.round(150*bright)},0.95)`;
+  const hNorm = Math.min(1, Math.max(0, (h - 20) / 110));
+  const bright = Math.max(0.48, 1 - (col + row) * 0.045);
+
+  let topCol: string;
+  let leftCol: string;
+  let rightCol: string;
+
+  if (mode === 'lidar') {
+    // False-color LiDAR elevation heatmap
+    if (hNorm > 0.75) {
+      topCol = `rgba(244, 63, 94, 0.95)`;
+      leftCol = `rgba(159, 18, 57, 0.92)`;
+      rightCol = `rgba(190, 18, 60, 0.95)`;
+    } else if (hNorm > 0.45) {
+      topCol = `rgba(251, 191, 36, 0.95)`;
+      leftCol = `rgba(180, 83, 9, 0.92)`;
+      rightCol = `rgba(217, 119, 6, 0.95)`;
+    } else {
+      topCol = `rgba(45, 212, 191, 0.95)`;
+      leftCol = `rgba(13, 148, 136, 0.92)`;
+      rightCol = `rgba(15, 118, 110, 0.95)`;
+    }
+  } else if (mode === 'rgb') {
+    // Realistic satellite orthomosaic roof tones
+    const tone = (col * 3 + row * 7) % 3;
+    if (tone === 0) {
+      topCol = `rgba(180, 110, 90, ${bright})`;
+      leftCol = `rgba(110, 60, 48, ${bright})`;
+      rightCol = `rgba(140, 80, 65, ${bright})`;
+    } else if (tone === 1) {
+      topCol = `rgba(160, 165, 175, ${bright})`;
+      leftCol = `rgba(90, 95, 105, ${bright})`;
+      rightCol = `rgba(120, 125, 135, ${bright})`;
+    } else {
+      topCol = `rgba(130, 145, 150, ${bright})`;
+      leftCol = `rgba(70, 80, 85, ${bright})`;
+      rightCol = `rgba(95, 105, 110, ${bright})`;
+    }
+  } else if (mode === 'ramp') {
+    // Spectral elevation ramp
+    const r = Math.round(50 + hNorm * 200);
+    const g = Math.round(220 - hNorm * 140);
+    const b = Math.round(250 - hNorm * 180);
+    topCol = `rgba(${r}, ${g}, ${b}, 0.95)`;
+    leftCol = `rgba(${Math.round(r*0.6)}, ${Math.round(g*0.6)}, ${Math.round(b*0.6)}, 0.92)`;
+    rightCol = `rgba(${Math.round(r*0.8)}, ${Math.round(g*0.8)}, ${Math.round(b*0.8)}, 0.95)`;
+  } else {
+    // Default: Predicted DSM architectural blue-cyan with specular reflection
+    topCol   = `rgba(${Math.round(180*bright)}, ${Math.round(210*bright)}, ${Math.round(245*bright)}, 0.98)`;
+    leftCol  = `rgba(${Math.round(35*bright)},  ${Math.round(58*bright)},  ${Math.round(92*bright)},  0.92)`;
+    rightCol = `rgba(${Math.round(65*bright)},  ${Math.round(95*bright)},  ${Math.round(140*bright)}, 0.95)`;
+  }
 
   const leftFace  = `${gx-half},${gy+qtr}  ${gx},${gy+half}  ${gx},${gy+half-h}  ${gx-half},${gy+qtr-h}`;
   const rightFace = `${gx+half},${gy+qtr}  ${gx},${gy+half}  ${gx},${gy+half-h}  ${gx+half},${gy+qtr-h}`;
   const topFace   = `${gx},${gy-h}  ${gx-half},${gy+qtr-h}  ${gx},${gy+half-h}  ${gx+half},${gy+qtr-h}`;
 
   return (
-    <motion.g
-      initial={{ opacity: 0, scaleY: 0 }}
-      animate={{ opacity: 1, scaleY: 1 }}
-      transition={{
-        type: 'spring',
-        stiffness: 120,
-        damping: 16,
-        delay: (col + row) * 0.05,
-      }}
-      style={{ transformOrigin: `${gx}px ${gy + half}px` }}
-    >
-      <polygon points={leftFace}  fill={leftCol}  stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
-      <polygon points={rightFace} fill={rightCol} stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
-      <polygon points={topFace}   fill={topCol}   stroke="rgba(255,255,255,0.12)" strokeWidth="0.5" />
-    </motion.g>
+    <g key={`b-${col}-${row}`}>
+      <polygon points={leftFace}  fill={leftCol}  stroke="rgba(255,255,255,0.06)" strokeWidth="0.45" />
+      <polygon points={rightFace} fill={rightCol} stroke="rgba(255,255,255,0.06)" strokeWidth="0.45" />
+      <polygon points={topFace}   fill={topCol}   stroke="rgba(255,255,255,0.18)" strokeWidth="0.55" />
+      {/* High-rise window facets */}
+      {h > 55 && (
+        <line
+          x1={gx}
+          y1={gy + half - h + 8}
+          x2={gx}
+          y2={gy + half - 4}
+          stroke="rgba(255,255,255,0.18)"
+          strokeWidth="0.75"
+          strokeDasharray="2,3"
+        />
+      )}
+    </g>
   );
 }
 
-const DepthWizardAnimation = () => (
-  <div className="w-full h-[300px] md:h-[460px] rounded-xl bg-[#0b0f19] border border-white/10 relative overflow-hidden flex font-sans text-[10px] sm:text-xs">
-    <div className="hidden md:flex w-52 h-full border-r border-white/10 bg-[#0d1424]/95 p-4 flex-col gap-4 z-20 shrink-0">
-      <div className="flex items-center gap-2 text-cyan-400 font-bold tracking-widest text-[11px]">
-        <Sliders size={13} /> DSM CONTROLS
-      </div>
-      <div className="grid grid-cols-2 gap-2 text-[10px]">
-        <button type="button" className="bg-white/5 border border-white/10 rounded-lg py-2 text-gray-400">Predicted DSM</button>
-        <button type="button" className="bg-cyan-900/30 border border-cyan-400/40 rounded-lg py-2 text-cyan-300 font-semibold shadow-[0_0_12px_rgba(6,182,212,0.25)]">LiDAR Ref</button>
-      </div>
-      <div className="grid grid-cols-2 gap-2 text-[10px]">
-        <button type="button" className="bg-cyan-900/30 border border-cyan-400/40 rounded-lg py-2 text-cyan-300">RGB Satellite</button>
-        <button type="button" className="bg-white/5 border border-white/10 rounded-lg py-2 text-gray-400">Elevation Ramp</button>
-      </div>
-    </div>
+const DepthWizardAnimation = () => {
+  const [mode, setMode] = useState<'dsm' | 'lidar' | 'rgb' | 'ramp'>('dsm');
 
-    <div className="flex-1 h-full relative overflow-hidden bg-[#05080f] flex items-center justify-center">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.08)_0%,transparent_70%)]" />
-      <motion.svg
-        width="340" height="300"
-        viewBox="-100 -145 240 260"
-        className="overflow-visible"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
-        <title>Depth Wizard Isometric 3D Digital Surface Model Projection</title>
-        {CITY_BUILDINGS.map(([col, row]) => {
-          const x = (col - row) * (TILE / 2);
-          const y = (col + row) * (TILE / 4);
-          return (
-            <polygon
-              key={`ground-${col}-${row}`}
-              points={`${x},${y}  ${x - TILE/2},${y + TILE/4}  ${x},${y + TILE/2}  ${x + TILE/2},${y + TILE/4}`}
-              fill="rgba(15,23,42,0.9)"
-              stroke="rgba(6,182,212,0.1)"
-              strokeWidth="0.5"
-            />
-          );
-        })}
-        {[...CITY_BUILDINGS]
-          .sort(([c1,r1],[c2,r2]) => (c1+r1) - (c2+r2))
-          .map(([col, row, h]) => (
-            <Building key={`b-${col}-${row}`} col={col} row={row} h={h} />
-          ))
-        }
-      </motion.svg>
-    </div>
+  const sortedBuildings = useMemo(
+    () => [...CITY_BUILDINGS].sort(([c1, r1], [c2, r2]) => (c1 + r1) - (c2 + r2)),
+    []
+  );
 
-    <div className="w-56 h-full border-l border-white/10 bg-[#0d1424]/95 p-4 flex flex-col gap-4 z-20 shrink-0 overflow-y-auto custom-scrollbar">
-      <div className="flex items-center gap-2 text-emerald-400 font-bold tracking-wider text-[10px] uppercase border-b border-white/10 pb-3">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />
-        ISRO Benchmark HUD
-      </div>
-      <div className="grid grid-cols-3 gap-1.5">
-        {[
-          { label: 'MAE',  value: '1.41m', color: 'text-emerald-400' },
-          { label: 'RMSE', value: '3.10m', color: 'text-cyan-400' },
-          { label: 'CORR', value: '0.905', color: 'text-yellow-400' },
-        ].map(s => (
-          <div key={s.label} className="bg-white/5 border border-white/10 rounded-lg p-2 flex flex-col items-center">
-            <span className="text-gray-500 text-[8px] uppercase tracking-wider mb-1">{s.label}</span>
-            <span className={`${s.color} font-bold text-[11px]`}>{s.value}</span>
+  return (
+    <div className="w-full h-[360px] md:h-[480px] rounded-xl bg-[#0b0f19] border border-white/10 relative overflow-hidden flex font-sans text-[10px] sm:text-xs shadow-2xl">
+      {/* Left DSM Controls Bar */}
+      <div className="hidden md:flex w-52 h-full border-r border-white/10 bg-[#0d1424]/95 p-4 flex-col gap-4 z-20 shrink-0">
+        <div className="flex items-center gap-2 text-cyan-400 font-bold tracking-widest text-[11px] border-b border-white/10 pb-2.5">
+          <Sliders size={13} /> DSM CONTROLS
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-[10px]">
+          <button
+            type="button"
+            onClick={() => setMode('dsm')}
+            className={`py-2 px-2 rounded-lg font-semibold border transition-all cursor-pointer text-center ${
+              mode === 'dsm'
+                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
+                : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
+            }`}
+          >
+            Predicted DSM
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('lidar')}
+            className={`py-2 px-2 rounded-lg font-semibold border transition-all cursor-pointer text-center ${
+              mode === 'lidar'
+                ? 'bg-rose-500/20 border-rose-400 text-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.3)]'
+                : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
+            }`}
+          >
+            LiDAR Ref
+          </button>
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-[10px]">
+          <button
+            type="button"
+            onClick={() => setMode('rgb')}
+            className={`py-2 px-2 rounded-lg font-semibold border transition-all cursor-pointer text-center ${
+              mode === 'rgb'
+                ? 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+                : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
+            }`}
+          >
+            RGB Satellite
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('ramp')}
+            className={`py-2 px-2 rounded-lg font-semibold border transition-all cursor-pointer text-center ${
+              mode === 'ramp'
+                ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
+            }`}
+          >
+            Elevation Ramp
+          </button>
+        </div>
+
+        <div className="mt-auto p-3 rounded-lg bg-black/40 border border-white/5 text-[9px] text-gray-400 space-y-1 font-mono">
+          <div className="text-gray-200 font-bold uppercase tracking-wider">Elevation Scale</div>
+          <div className="flex justify-between">
+            <span>Ground:</span>
+            <span className="text-emerald-400">0.0m</span>
           </div>
-        ))}
+          <div className="flex justify-between">
+            <span>Peak Tower:</span>
+            <span className="text-cyan-400">130.0m</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Sensor MAE:</span>
+            <span className="text-amber-400">1.41m</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main 3D Isometric Viewport */}
+      <div className="flex-1 h-full relative overflow-hidden bg-[#05080f] flex flex-col items-center justify-center p-2 sm:p-5">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.12)_0%,transparent_70%)] pointer-events-none" />
+
+        {/* Dynamic Responsive Isometric Cityscape SVG */}
+        <motion.svg
+          viewBox="-105 -118 210 220"
+          className="w-full h-full max-h-[420px] max-w-[500px] drop-shadow-[0_25px_35px_rgba(0,0,0,0.9)]"
+          preserveAspectRatio="xMidYMid meet"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.45 }}
+        >
+          <title>Depth Wizard Isometric 3D Digital Surface Model Projection</title>
+
+          {/* Ground Grid Plinth */}
+          {CITY_BUILDINGS.map(([col, row]) => {
+            const x = (col - row) * (TILE / 2);
+            const y = (col + row) * (TILE / 4);
+            return (
+              <polygon
+                key={`ground-${col}-${row}`}
+                points={`${x},${y}  ${x - TILE/2},${y + TILE/4}  ${x},${y + TILE/2}  ${x + TILE/2},${y + TILE/4}`}
+                fill="rgba(15,23,42,0.92)"
+                stroke="rgba(6,182,212,0.15)"
+                strokeWidth="0.5"
+              />
+            );
+          })}
+
+          {/* Isometric Extruded Buildings */}
+          {sortedBuildings.map(([col, row, h]) => (
+            <Building key={`b-${col}-${row}`} col={col} row={row} h={h} mode={mode} />
+          ))}
+        </motion.svg>
+
+        {/* Elevation Legend Overlay */}
+        <div className="absolute bottom-2.5 left-3 right-3 sm:left-6 sm:right-6 z-20 flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#0a101d]/90 border border-white/10 backdrop-blur-md text-[9px] font-mono text-gray-300 pointer-events-none">
+          <span className="text-gray-400">0m (Ground)</span>
+          <div className="flex-1 mx-3 h-1.5 rounded-full bg-gradient-to-r from-emerald-500 via-cyan-400 via-amber-400 to-rose-500 opacity-80" />
+          <span className="text-cyan-400 font-bold">130m Max Peak (Direct Metric)</span>
+        </div>
+      </div>
+
+      {/* Right Benchmark HUD */}
+      <div className="w-52 sm:w-56 h-full border-l border-white/10 bg-[#0d1424]/95 p-3.5 sm:p-4 flex flex-col gap-3.5 z-20 shrink-0 overflow-y-auto custom-scrollbar">
+        <div className="flex items-center gap-2 text-emerald-400 font-bold tracking-wider text-[10px] uppercase border-b border-white/10 pb-2.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />
+          ISRO Benchmark HUD
+        </div>
+        <div className="grid grid-cols-3 gap-1.5">
+          {[
+            { label: 'MAE',  value: '1.41m', color: 'text-emerald-400' },
+            { label: 'RMSE', value: '3.10m', color: 'text-cyan-400' },
+            { label: 'CORR', value: '0.905', color: 'text-yellow-400' },
+          ].map(s => (
+            <div key={s.label} className="bg-white/5 border border-white/10 rounded-lg p-1.5 flex flex-col items-center">
+              <span className="text-gray-500 text-[8px] uppercase tracking-wider mb-0.5">{s.label}</span>
+              <span className={`${s.color} font-bold text-[10px]`}>{s.value}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-1.5 text-[9px] font-mono text-gray-300">
+          <div className="text-gray-400 font-bold uppercase tracking-wider text-[8px]">Baselines vs Ours</div>
+          <div className="p-2 rounded bg-white/[0.02] border border-white/5 space-y-1">
+            <div className="flex justify-between">
+              <span className="text-gray-400">Zero Elevation:</span>
+              <span className="text-red-400">4.43m</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Per-Tile Mean:</span>
+              <span className="text-red-400">4.88m</span>
+            </div>
+            <div className="flex justify-between font-bold text-emerald-400 border-t border-white/5 pt-1">
+              <span>DepthWizard:</span>
+              <span>1.41m</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ─────────────────────────────────────────────────────────────
 // MLOPS PIPELINE – Animated Node Graph
@@ -729,14 +885,14 @@ export default function ProjectsSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-[#030712]/90 backdrop-blur-xl"
+              className="absolute inset-0 bg-[#030712]/92 backdrop-blur-md"
               onClick={() => setSelectedId(null)}
             />
 
             <motion.div
               layoutId={`card-${selectedId}`}
-              transition={{ type: 'spring', stiffness: 160, damping: 22 }}
-              className="w-full max-w-5xl bg-[#080e1a]/95 border border-white/15 rounded-3xl relative z-10 flex flex-col overflow-y-auto max-h-[90vh] shadow-2xl custom-scrollbar p-8 md:p-12 gap-8"
+              transition={{ type: 'spring', stiffness: 180, damping: 24 }}
+              className="w-full max-w-5xl bg-[#080e1a]/95 border border-white/15 rounded-3xl relative z-10 flex flex-col overflow-y-auto max-h-[90vh] shadow-2xl custom-scrollbar p-6 sm:p-8 md:p-10 gap-6 will-change-transform"
             >
               <button
                 type="button"

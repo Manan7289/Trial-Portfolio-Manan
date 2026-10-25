@@ -15,10 +15,11 @@ function InteractiveConstellationCanvas({ scrollRatio }: { scrollRatio: number }
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
     let animId = 0;
+    let isVisible = true;
     let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
     let height = (canvas.height = canvas.parentElement?.clientHeight || window.innerHeight);
 
@@ -41,41 +42,61 @@ function InteractiveConstellationCanvas({ scrollRatio }: { scrollRatio: number }
       mouseRef.current.active = false;
     };
 
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mouseleave', handleMouseLeave, { passive: true });
 
-    const count = Math.min(68, Math.max(36, Math.floor((width * height) / 16000)));
+    // Pause animation when hero is off-screen to eliminate background lag
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible && !animId) {
+          animId = requestAnimationFrame(render);
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
+
+    // Highly optimized node count: 32-38 nodes provides full starry density without lag
+    const count = Math.min(38, Math.max(22, Math.floor((width * height) / 32000)));
     const nodes = Array.from({ length: count }, (_, i) => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.65,
-      vy: (Math.random() - 0.5) * 0.65,
-      r: 1.5 + (i % 3) * 0.7,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      r: 1.4 + (i % 3) * 0.6,
       hue: i % 3 === 0 ? '#60a5fa' : i % 3 === 1 ? '#a78bfa' : '#34d399',
       depth: 0.4 + (i % 5) * 0.18,
     }));
 
     const render = () => {
+      if (!isVisible) {
+        animId = 0;
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
       const sp = scrollRef.current;
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
       const mActive = mouseRef.current.active;
 
+      // Mouse glow
       if (mActive && mx >= 0 && my >= 0) {
-        const grad = ctx.createRadialGradient(mx, my, 10, mx, my, 240);
-        grad.addColorStop(0, 'rgba(59, 130, 246, 0.14)');
-        grad.addColorStop(0.5, 'rgba(139, 92, 246, 0.06)');
+        const grad = ctx.createRadialGradient(mx, my, 8, mx, my, 220);
+        grad.addColorStop(0, 'rgba(59, 130, 246, 0.12)');
+        grad.addColorStop(0.5, 'rgba(139, 92, 246, 0.05)');
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, width, height);
       }
 
+      // Update positions
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i];
-        n.x += n.vx * (1 + sp * 1.5);
-        n.y += n.vy - sp * 0.35 * n.depth;
+        n.x += n.vx * (1 + sp * 1.2);
+        n.y += n.vy - sp * 0.25 * n.depth;
 
         if (n.x < 0) n.x = width;
         if (n.x > width) n.x = 0;
@@ -86,8 +107,8 @@ function InteractiveConstellationCanvas({ scrollRatio }: { scrollRatio: number }
           const dx = mx - n.x;
           const dy = my - n.y;
           const dist = Math.hypot(dx, dy);
-          if (dist < 180 && dist > 1) {
-            const force = ((180 - dist) / 180) * 0.9;
+          if (dist < 160 && dist > 1) {
+            const force = ((160 - dist) / 160) * 0.7;
             n.x += (dx / dist) * force;
             n.y += (dy / dist) * force;
           }
@@ -98,38 +119,50 @@ function InteractiveConstellationCanvas({ scrollRatio }: { scrollRatio: number }
         ctx.fillStyle = n.hue;
         ctx.globalAlpha = 0.65;
         ctx.fill();
+      }
 
+      // Batch all network lines in one single stroke for maximum GPU/CPU efficiency
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.12)';
+      ctx.lineWidth = 0.75;
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
         for (let j = i + 1; j < nodes.length; j++) {
           const n2 = nodes[j];
           const dx = n.x - n2.x;
           const dy = n.y - n2.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 130) {
-            ctx.beginPath();
-            ctx.moveTo(n.x, n.y);
-            ctx.lineTo(n2.x, n2.y);
-            ctx.strokeStyle = 'rgba(148, 163, 184, 0.16)';
-            ctx.globalAlpha = (1 - dist / 130) * 0.45;
-            ctx.lineWidth = 0.8;
-            ctx.stroke();
-          }
-        }
-
-        if (mActive) {
-          const dx = mx - n.x;
-          const dy = my - n.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 190) {
-            ctx.beginPath();
-            ctx.moveTo(n.x, n.y);
-            ctx.lineTo(mx, my);
-            ctx.strokeStyle = '#38bdf8';
-            ctx.globalAlpha = (1 - dist / 190) * 0.55;
-            ctx.lineWidth = 1;
-            ctx.stroke();
+          if (Math.abs(dx) < 120 && Math.abs(dy) < 120) {
+            const dist = Math.hypot(dx, dy);
+            if (dist < 120) {
+              ctx.moveTo(n.x, n.y);
+              ctx.lineTo(n2.x, n2.y);
+            }
           }
         }
       }
+      ctx.stroke();
+
+      // Mouse connection lines
+      if (mActive) {
+        ctx.beginPath();
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 0.85;
+        ctx.globalAlpha = 0.45;
+        for (let i = 0; i < nodes.length; i++) {
+          const n = nodes[i];
+          const dx = mx - n.x;
+          const dy = my - n.y;
+          if (Math.abs(dx) < 170 && Math.abs(dy) < 170) {
+            const dist = Math.hypot(dx, dy);
+            if (dist < 170) {
+              ctx.moveTo(n.x, n.y);
+              ctx.lineTo(mx, my);
+            }
+          }
+        }
+        ctx.stroke();
+      }
+
       ctx.globalAlpha = 1;
       animId = requestAnimationFrame(render);
     };
@@ -137,13 +170,14 @@ function InteractiveConstellationCanvas({ scrollRatio }: { scrollRatio: number }
     animId = requestAnimationFrame(render);
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />;
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0 will-change-transform" />;
 }
 
 export default function HeroSection() {
