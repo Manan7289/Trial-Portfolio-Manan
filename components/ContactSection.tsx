@@ -12,7 +12,7 @@ export default function ContactSection() {
         transition={{ duration: 0.7 }}
       >
         <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white tracking-tight">
-          Let's Build <span className="text-gradient">Together</span>
+          Let&apos;s Build <span className="text-gradient">Together</span>
         </h2>
         <p className="text-gray-400 mb-12 max-w-xl mx-auto text-lg">
           Ready to collaborate on the next big AI innovation or build robust software solutions? Establish a secure connection via the channels below.

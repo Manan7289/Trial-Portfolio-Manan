@@ -1,0 +1,172 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=0.5in,top=0.5in,right=0.5in,bottom=0.5in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fontawesome5}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{fontspec}
+
+% ATS optimization: Make sure text is fully selectable and doesn't use weird ligatures that break parsers
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+% Colors
+\usepackage{xcolor}
+\definecolor{darkBlue}{RGB}{0,0,0}
+
+% Custom section formatting
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{10pt}{6pt}
+
+\setlength{\parindent}{0pt}
+\newcommand{\skillbox}[1]{\makebox[2.5em][l]{#1}}
+
+% Custom commands for the two-column layout
+\newenvironment{leftcolumn}{\begin{minipage}[t]{0.62\textwidth}}{\end{minipage}\hfill}
+\newenvironment{rightcolumn}{\begin{minipage}[t]{0.34\textwidth}}{\end{minipage}}
+
+% Document Start
+\begin{document}
+
+% ----------------- HEADER -----------------
+\begin{center}
+    {\Huge \bfseries MANAN GARG} \\[4pt]
+    {\large B.Tech Computer Science \& Engineering | AI/ML • Software Engineering} \\[4pt]
+    \small 
+    \href{mailto:Gargmanan7289@gmail.com}{Gargmanan7289@gmail.com} • 
+    +91-9897848251 • 
+    \href{https://github.com/Manan7289}{GitHub: Manan7289} • 
+    \href{https://linkedin.com/in/manan-garg-85012b318}{LinkedIn: manan-garg}
+\end{center}
+
+\vspace{10pt}
+
+% ----------------- PROFILE (ATS Optimized) -----------------
+\section*{Profile}
+Computer Science undergraduate and \textbf{eager learner who is always excited to learn} new technologies, with hands-on experience in \textbf{AI/ML, Computer Vision, Geospatial Deep Learning, and MLOps}. Driven to build practical, scalable systems by translating research papers and benchmark datasets into production-ready code. Proven team contributor across \textbf{Agile development}, competitive programming, financial equity analysis, and student-led technical initiatives. Proficient in \textbf{Python, PyTorch, FastAPI, TypeScript/Next.js, and Cloud MLOps}.
+
+\vspace{12pt}
+
+% ================== TWO COLUMN LAYOUT ==================
+\begin{leftcolumn}
+
+% ----------------- EDUCATION -----------------
+\section*{Education}
+\textbf{B.Tech in Computer Science and Engineering} \\
+Bennett University | 2024--2028 | CGPA: 7.8/10.0
+
+% ----------------- PROJECTS -----------------
+\section*{Projects}
+
+\textbf{Depth Wizard (SIH26175 Satellite DSM Synthesis)} \\
+\textit{Python • PyTorch • FastAPI • Geospatial Computer Vision} \\
+\vspace{-15pt}
+\begin{itemize}[leftmargin=12pt, itemsep=0pt]
+    \item Engineered a single-view satellite elevation and 3D Digital Surface Model (DSM) architecture validated against ISRO LiDAR ground truth, achieving a \textbf{1.41m Direct Metric MAE}, \textbf{3.10m RMSE}, and \textbf{0.905 Pearson correlation}.
+\end{itemize}
+
+\textbf{CadastralAI (Smart India Hackathon Internal Rank 1)} \\
+\textit{Python • AI/ML • Computer Vision • GIS} \\
+\vspace{-15pt}
+\begin{itemize}[leftmargin=12pt, itemsep=0pt]
+    \item Secured \textbf{Rank 1} at the college level in the Smart India Hackathon by building an automated boundary segmentation pipeline that digitizes complex cadastral land parcels and eliminates manual GIS tracing errors.
+\end{itemize}
+
+\textbf{MLOps Pipelines \& Entity Resolution Architecture} \\
+\textit{Python • Scikit-Learn • FastAPI • Distributed Training} \\
+\vspace{-15pt}
+\begin{itemize}[leftmargin=12pt, itemsep=0pt]
+    \item Architected a 5-stage end-to-end ML pipeline for the Amazon ML Challenge encompassing automated data ingestion, feature normalization, distributed GPU training, ensemble evaluation, and FastAPI inference serving.
+\end{itemize}
+
+% ----------------- EXTRACURRICULAR -----------------
+\section*{Experience \& Leadership}
+
+\textbf{Finlatics} | \textit{Equity Markets Analyst (Oct 2024 -- Dec 2024)} \\
+\vspace{-15pt}
+\begin{itemize}[leftmargin=12pt, itemsep=0pt]
+    \item Conducted real-time fundamental and quantitative equity research across Banking, Oil \& Gas, and Engineering sectors, achieving a Finscore of \textbf{55.05} outperforming market baselines.
+\end{itemize}
+\vspace{-4pt}
+\textbf{Enactus, Bennett University} | \textit{Project Management Member} \\
+\vspace{-15pt}
+\begin{itemize}[leftmargin=12pt, itemsep=0pt]
+    \item Contributed to cross-functional planning and agile execution of community-focused social entrepreneurship initiatives.
+\end{itemize}
+\vspace{-4pt}
+\textbf{CodeChef Club, Bennett University} | \textit{Member} \\
+\vspace{-15pt}
+\begin{itemize}[leftmargin=12pt, itemsep=0pt]
+    \item Actively participated in competitive programming contests, optimizing complex algorithms and data structures.
+\end{itemize}
+
+% ----------------- CERTIFICATIONS -----------------
+\section*{Certifications}
+\begin{itemize}[leftmargin=12pt, itemsep=2pt]
+    \item \textbf{AWS Academy Certifications:} Generative AI Foundations, Cloud Developing, Cloud Foundations, Cloud Security
+    \item \textbf{Machine Learning Specialization} — DeepLearning.AI / Stanford Online
+    \item \textbf{Software Engineering} — NPTEL
+\end{itemize}
+
+\end{leftcolumn}
+% ========================================================
+\begin{rightcolumn}
+
+% ----------------- SOFT SKILLS -----------------
+\section*{Skills}
+{\small
+\begin{tabular}{@{}ll}
+Eager \& Continuous Learning & $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ \\
+Active Listening & $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ \\
+Perseverance & $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ \\
+Teamwork & $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ $\square$ \\
+Written \& Oral Comm. & $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ $\square$ \\
+Creativity \& Problem Solv. & $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ \\
+\end{tabular}
+}
+
+% ----------------- TECH SKILLS -----------------
+\section*{Technical Skills}
+
+\textbf{Programming} \\
+Python, C++, Java, JavaScript, TypeScript, HTML/CSS, SQL
+
+\vspace{6pt}
+\textbf{AI \& Machine Learning} \\
+Scikit-Learn, TensorFlow, PyTorch, Pandas, NumPy, Matplotlib, Computer Vision
+
+\vspace{6pt}
+\textbf{Tools \& Cloud} \\
+Git, GitHub, FastAPI, Jupyter Notebook, MLOps, Linux, AWS Cloud, REST APIs, CI/CD
+
+% ----------------- LANGUAGES -----------------
+\section*{Languages}
+{\small
+\begin{tabular}{@{}ll}
+English & $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ \\
+Hindi   & $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ $\blacksquare$ \\
+German  & $\blacksquare$ $\blacksquare$ $\blacksquare$ $\square$ $\square$ \\
+\end{tabular}
+}
+
+% ----------------- INTERESTS -----------------
+\section*{Interests}
+Artificial Intelligence • Machine Learning • Cloud Computing • Geospatial Vision • Full-Stack Systems • Traveling
+
+% ----------------- HIGHLIGHTS -----------------
+\section*{Highlights}
+\begin{itemize}[leftmargin=12pt, itemsep=0pt]
+    \item \textbf{Smart India Hackathon} — College Rank 1
+    \item \textbf{1.41m MAE} on ISRO LiDAR Satellite DSM Benchmark
+    \item End-to-end \textbf{MLOps pipelines} and FastAPI integration
+    \item Eager learner always excited to master emerging tech
+\end{itemize}
+
+\end{rightcolumn}
+
+\end{document}

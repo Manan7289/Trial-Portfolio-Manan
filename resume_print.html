@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manan Garg - Resume</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #000;
+            background: #fff;
+            line-height: 1.4;
+            font-size: 11px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            background: white;
+        }
+
+        /* HEADER */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        .contact {
+            font-size: 11px;
+            color: #333;
+        }
+        .contact a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        /* SECTION HEADERS */
+        h2 {
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-bottom: 2px solid #000;
+            padding-bottom: 3px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        /* PROFILE */
+        .profile {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        /* TWO COLUMN LAYOUT */
+        .layout {
+            display: flex;
+            gap: 30px;
+        }
+        .left-col {
+            flex: 0 0 62%;
+        }
+        .right-col {
+            flex: 1;
+        }
+
+        /* ITEMS */
+        .item {
+            margin-bottom: 12px;
+        }
+        .item-title {
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .item-meta {
+            color: #555;
+            font-size: 10.5px;
+            margin-bottom: 3px;
+            font-style: italic;
+        }
+        ul {
+            padding-left: 15px;
+        }
+        li {
+            margin-bottom: 3px;
+        }
+
+        /* SKILL BARS */
+        .skill-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .squares {
+            letter-spacing: 2px;
+        }
+        .sq-filled { color: #000; font-size: 10px; }
+        .sq-empty { color: #000; font-size: 10px; }
+
+        @media print {
+            body { background: white; }
+            .page { padding: 0; max-width: 100%; margin: 0; box-shadow: none; }
+            @page { margin: 12mm; size: A4 portrait; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page" style="padding-top: 30px; padding-bottom: 20px;">
+        <header>
+            <h1>MANAN GARG</h1>
+            <div class="subtitle">B.Tech Computer Science &amp; Engineering | AI/ML • Software Engineering</div>
+            <div class="contact">
+                <a href="mailto:Gargmanan7289@gmail.com">Gargmanan7289@gmail.com</a> • +91-9897848251 • 
+                <a href="https://github.com/Manan7289">GitHub: Manan7289</a> • 
+                <a href="https://linkedin.com/in/manan-garg-85012b318">LinkedIn: manan-garg</a>
+            </div>
+        </header>
+
+        <section class="profile">
+            <h2>PROFILE</h2>
+            <p>Computer Science undergraduate and <strong>eager learner who is always excited to learn</strong> emerging technologies, with hands-on experience in <strong>AI/ML, Computer Vision, Geospatial Deep Learning, and MLOps</strong>. Driven to build practical, scalable systems by translating research papers and benchmark datasets into production-ready code. Strong team contributor across <strong>Agile development</strong>, competitive programming, financial equity analysis, and student-led initiatives. Highly proficient in <strong>Python, PyTorch, FastAPI, TypeScript/Next.js, and RESTful APIs</strong>.</p>
+        </section>
+
+        <div class="layout">
+            <div class="left-col">
+                <section>
+                    <h2>EDUCATION</h2>
+                    <div class="item">
+                        <div class="item-title">B.Tech in Computer Science and Engineering</div>
+                        <div class="item-meta">Bennett University | 2024–2028 | CGPA: 7.8/10.0</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>PROJECTS</h2>
+                    <div class="item">
+                        <div class="item-title">Depth Wizard (SIH26175 Satellite DSM Synthesis)</div>
+                        <div class="item-meta">Python • PyTorch • FastAPI • 3D Geospatial Modeling</div>
+                        <ul>
+                            <li>Engineered a single-view satellite elevation and 3D Digital Surface Model (DSM) architecture validated against ISRO LiDAR ground truth, achieving a <strong>1.41m Direct Metric MAE</strong>, <strong>3.10m RMSE</strong>, and <strong>0.905 Pearson correlation</strong>.</li>
+                        </ul>
+                    </div>
+
+                    <div class="item">
+                        <div class="item-title">CadastralAI (Smart India Hackathon Internal Rank 1)</div>
+                        <div class="item-meta">Python • AI/ML • Computer Vision • GIS</div>
+                        <ul>
+                            <li>Secured <strong>Rank 1</strong> at the college level in the Smart India Hackathon by developing an automated boundary segmentation pipeline for digitizing complex cadastral land parcels and eliminating manual mapping errors.</li>
+                        </ul>
+                    </div>
+
+                    <div class="item">
+                        <div class="item-title">MLOps Pipelines &amp; Entity Resolution Architecture</div>
+                        <div class="item-meta">Python • Scikit-Learn • FastAPI • Distributed Training</div>
+                        <ul>
+                            <li>Built a 5-stage end-to-end ML workflow for the Amazon ML Challenge encompassing automated data ingestion, feature normalization, distributed model training, ensemble evaluation, and FastAPI inference endpoints.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>EXPERIENCE &amp; LEADERSHIP</h2>
+                    <div class="item" style="margin-bottom: 6px;">
+                        <div class="item-title">Finlatics <span style="font-weight:normal">| Equity Markets Analyst (Oct 2024 – Dec 2024)</span></div>
+                        <ul>
+                            <li>Conducted real-time fundamental and quantitative equity research across Banking, Oil &amp; Gas, and Engineering sectors, achieving a Finscore of <strong>55.05</strong> outperforming baselines.</li>
+                        </ul>
+                    </div>
+                    <div class="item" style="margin-bottom: 6px;">
+                        <div class="item-title">Enactus, Bennett University <span style="font-weight:normal">| Project Management Member</span></div>
+                        <ul>
+                            <li>Contributed to cross-functional planning and agile execution of community-focused social entrepreneurship initiatives.</li>
+                        </ul>
+                    </div>
+                    <div class="item">
+                        <div class="item-title">CodeChef Club, Bennett University <span style="font-weight:normal">| Member</span></div>
+                        <ul>
+                            <li>Actively participated in competitive programming contests, optimizing complex algorithms and data structures.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>CERTIFICATIONS</h2>
+                    <ul>
+                        <li><strong>AWS Academy Certifications:</strong> Generative AI Foundations, Cloud Developing, Cloud Foundations, Cloud Security</li>
+                        <li><strong>Machine Learning Specialization</strong> — DeepLearning.AI / Stanford Online</li>
+                        <li><strong>Software Engineering</strong> — NPTEL</li>
+                    </ul>
+                </section>
+            </div>
+
+            <div class="right-col">
+                <section>
+                    <h2>SKILLS</h2>
+                    <div class="skill-row"><span>Eager &amp; Continuous Learning</span><span class="squares"><span class="sq-filled">■■■■■</span></span></div>
+                    <div class="skill-row"><span>Active Listening</span><span class="squares"><span class="sq-filled">■■■■■</span></span></div>
+                    <div class="skill-row"><span>Perseverance</span><span class="squares"><span class="sq-filled">■■■■■</span></span></div>
+                    <div class="skill-row"><span>Teamwork</span><span class="squares"><span class="sq-filled">■■■■</span><span class="sq-empty">□</span></span></div>
+                    <div class="skill-row"><span>Written &amp; Oral Comm.</span><span class="squares"><span class="sq-filled">■■■■</span><span class="sq-empty">□</span></span></div>
+                    <div class="skill-row"><span>Creativity &amp; Problem Solv.</span><span class="squares"><span class="sq-filled">■■■■■</span></span></div>
+                </section>
+
+                <section>
+                    <h2>TECHNICAL SKILLS</h2>
+                    <div class="item">
+                        <div class="item-title">Programming</div>
+                        <div style="font-size: 10.5px">Python, C++, Java, JavaScript, TypeScript, HTML/CSS, SQL</div>
+                    </div>
+                    <div class="item">
+                        <div class="item-title">AI &amp; Machine Learning</div>
+                        <div style="font-size: 10.5px">Scikit-Learn, TensorFlow, PyTorch, Pandas, NumPy, Matplotlib, Computer Vision</div>
+                    </div>
+                    <div class="item">
+                        <div class="item-title">Tools &amp; Cloud</div>
+                        <div style="font-size: 10.5px">Git, GitHub, FastAPI, Jupyter Notebook, MLOps, Linux, AWS Cloud, REST APIs, CI/CD</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>LANGUAGES</h2>
+                    <div class="skill-row"><span>English</span><span class="squares"><span class="sq-filled">■■■■■</span></span></div>
+                    <div class="skill-row"><span>Hindi</span><span class="squares"><span class="sq-filled">■■■■■</span></span></div>
+                    <div class="skill-row"><span>German</span><span class="squares"><span class="sq-filled">■■■</span><span class="sq-empty">□□</span></span></div>
+                </section>
+
+                <section>
+                    <h2>INTERESTS</h2>
+                    <p style="font-size: 10.5px">Artificial Intelligence • Machine Learning • Cloud Computing • Geospatial Vision • Full-Stack Systems • Traveling</p>
+                </section>
+
+                <section>
+                    <h2>HIGHLIGHTS</h2>
+                    <ul>
+                        <li><strong>Smart India Hackathon</strong> — College Rank 1</li>
+                        <li><strong>1.41m MAE</strong> on ISRO LiDAR Satellite DSM Benchmark</li>
+                        <li>Experience with end-to-end <strong>ML pipelines</strong> and FastAPI integration</li>
+                        <li>Eager learner always excited to master emerging tech</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
