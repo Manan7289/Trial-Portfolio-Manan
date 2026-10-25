@@ -174,7 +174,7 @@ export default function HeroSection() {
     },
     {
       icon: <Cpu size={16} className="text-blue-400" />,
-      title: 'AI/ML & Geospatial Vision',
+      title: 'AI/ML & Deep Learning Systems',
       desc: 'Engineering deep learning pipelines for satellite elevation modeling (1.41m MAE) and automated cadastral mapping.',
     },
     {
@@ -224,7 +224,7 @@ export default function HeroSection() {
           transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.16 }}
           className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-gradient"
         >
-          AI &amp; ML Engineer · Geospatial &amp; Full-Stack Builder
+          AI &amp; ML Engineer · Full-Stack Builder
         </motion.h2>
 
         <motion.p

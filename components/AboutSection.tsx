@@ -20,7 +20,7 @@ export default function AboutSection() {
   ];
 
   const learningPoints = [
-    'Eager learner and excited to learn emerging AI architectures, deep learning patterns, geospatial vision, and scalable system design.',
+    'Eager learner and excited to learn emerging AI architectures, deep learning patterns, computer vision, and scalable system design.',
     'Translates academic literature and benchmark datasets (ISRO LiDAR, Geofabrik OSM, Amazon ML) into reproducible production pipelines.',
     'Combines competitive programming rigor with cross-functional teamwork and agile product execution.',
   ];
