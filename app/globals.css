@@ -39,61 +39,6 @@
   background-clip: text;
 }
 
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(15px, -20px, 0) scale(1.04);
-  }
-}
-
-.animate-float-slow {
-  animation: floatSlow 12s ease-in-out infinite;
-  will-change: transform;
-}
-
-/* Animmaster Lib: Rotating gradient border animation */
-@keyframes spin-gradient {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.animate-gradient-border {
-  position: relative;
-  isolation: isolate;
-}
-.animate-gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #10b981, #3b82f6);
-  animation: spin-gradient 4s linear infinite;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: -1;
-}
-.animate-gradient-border:hover::before {
-  opacity: 1;
-}
-
-/* Vengeance UI: Shimmer sweep utility */
-@keyframes shimmer-sweep {
-  0% { transform: translateX(-110%); }
-  100% { transform: translateX(110%); }
-}
-
-.shimmer-hover:hover .shimmer-inner {
-  animation: shimmer-sweep 0.7s ease-in-out;
-}
-
-/* Skiper UI: Perspective tilt utility */
-.perspective-card {
-  transform-style: preserve-3d;
-  perspective: 900px;
-}
-
 /* Premium Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

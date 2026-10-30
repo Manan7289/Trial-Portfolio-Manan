@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ChevronDown, Sparkles, Compass, Cpu, Layers } from 'lucide-react';
 import { ShineButton, MagneticWrapper, SpotlightCard, staggerItem } from './ui/InteractiveEffects';
-import { AnimatedHeading, FlipText } from './ui/AnimatedText';
+import { AnimatedHeading } from './ui/AnimatedText';
 
 function InteractiveConstellationCanvas({ scrollRatio }: { scrollRatio: number }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -244,7 +244,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ type: 'spring', stiffness: 110, damping: 20 }}
-          className="relative inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-white/15 bg-white/[0.05] text-xs font-medium text-gray-200 mb-8 backdrop-blur-md shadow-[0_0_24px_rgba(59,130,246,0.22)]"
+          className="relative inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-white/15 bg-white/[0.05] text-xs font-medium text-gray-200 mb-6 backdrop-blur-md shadow-[0_0_24px_rgba(59,130,246,0.22)]"
         >
           {/* Skiper UI: Animated border glow */}
           <span className="absolute inset-0 rounded-full animate-pulse opacity-30" style={{ background: 'linear-gradient(90deg, #3b82f620, #8b5cf620, #10b98120)', filter: 'blur(6px)' }} aria-hidden />
@@ -257,42 +257,38 @@ export default function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.01, delay: 0.05 }}
-          className="text-6xl sm:text-7xl md:text-8xl font-extrabold mb-5 tracking-tight text-white"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-4 tracking-tight text-white"
         >
           <AnimatedHeading text="Manan" delay={0.08} />
           {' '}
           <AnimatedHeading text="Garg" className="text-gray-500" delay={0.14} />
         </motion.h1>
 
-        {/* Vengeance UI: Flip text subtitle */}
+        {/* Clean, high-impact gradient subtitle without clipping artifacts */}
         <motion.h2
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.2 }}
-          className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-gradient"
+          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.16 }}
+          className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold mb-5 text-gradient"
         >
-          <FlipText primary="AI/ML Engineer" secondary="Systems Architect" className="text-gradient" />
-          {' · '}
-          <FlipText primary="Intelligent Automation" secondary="Computer Vision" className="text-gradient" />
-          {' & '}
-          <FlipText primary="Full-Stack Builder" secondary="MLOps Engineer" className="text-gradient" />
+          AI/ML Engineer · Intelligent Automation &amp; Full-Stack Builder
         </motion.h2>
 
         <motion.p
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.28 }}
-          className="text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10 text-base md:text-lg"
+          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.22 }}
+          className="text-gray-300 max-w-2xl mx-auto leading-relaxed mb-8 text-sm sm:text-base md:text-lg"
         >
           Computer Science undergraduate at Bennett University passionate about building scalable software, autonomous systems, and applied machine learning. As an <span className="text-white font-semibold">eager learner who is always excited to learn</span> new technologies, I focus on translating complex algorithmic concepts into robust production applications—from end-to-end MLOps pipelines and intelligent automation to distributed full-stack architectures and computer vision systems.
         </motion.p>
 
         {/* Vengeance UI: Shine buttons + Animmaster: Magnetic wrapper */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.36 }}
-          className="flex flex-wrap gap-4 justify-center mb-14"
+          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.28 }}
+          className="flex flex-wrap gap-4 justify-center mb-10"
         >
           <MagneticWrapper>
             <ShineButton href="#projects" variant="primary">
@@ -308,10 +304,10 @@ export default function HeroSection() {
 
         {/* Skiper UI: Spotlight 3D tilt pillar cards */}
         <motion.div
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.44 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full text-left"
+          transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 w-full text-left"
         >
           {pillars.map((pillar, idx) => (
             <SpotlightCard
@@ -321,7 +317,7 @@ export default function HeroSection() {
             >
               <motion.div
                 variants={staggerItem}
-                className="p-5"
+                className="p-4 sm:p-5"
               >
                 <div className="flex items-center gap-2.5 mb-2">
                   <div className="p-2 rounded-lg bg-white/5 border border-white/10">

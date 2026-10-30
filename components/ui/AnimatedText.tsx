@@ -39,58 +39,6 @@ export function AnimatedHeading({
   );
 }
 
-// Vengeance UI: Flip/morph text — cycles between labels on hover
-export function FlipText({
-  primary,
-  secondary,
-  className = '',
-}: {
-  primary: string;
-  secondary: string;
-  className?: string;
-}) {
-  return (
-    <span
-      className={`group relative inline-block overflow-hidden cursor-default ${className}`}
-      style={{ height: '1.2em' }}
-    >
-      <span className="flex flex-col transition-transform duration-500 ease-in-out group-hover:-translate-y-full">
-        <span className="inline-block leading-none pb-1">{primary}</span>
-        <span className="inline-block leading-none">{secondary}</span>
-      </span>
-    </span>
-  );
-}
-
-// Animmaster Lib: Glitch scramble text on hover
-export function GlitchText({
-  text,
-  className = '',
-}: {
-  text: string;
-  className?: string;
-}) {
-  return (
-    <span className={`relative inline-block group cursor-default ${className}`}>
-      <span className="relative z-10 transition-opacity duration-150 group-hover:opacity-0">{text}</span>
-      <span
-        className="absolute inset-0 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-150 font-mono text-brand-primary"
-        aria-hidden
-        style={{ letterSpacing: '0.03em' }}
-      >
-        {text
-          .split('')
-          .map((c) =>
-            c === ' '
-              ? ' '
-              : String.fromCharCode(33 + Math.floor(Math.abs(Math.sin(c.charCodeAt(0) * 7.3)) * 94))
-          )
-          .join('')}
-      </span>
-    </span>
-  );
-}
-
 // Vengeance UI: Animated count-up stat
 export function AnimatedStat({
   value,
