@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ChevronDown, Sparkles, Compass, Cpu, Layers } from 'lucide-react';
+import { ShineButton, MagneticWrapper, SpotlightCard, staggerItem } from './ui/InteractiveEffects';
+import { AnimatedHeading, FlipText } from './ui/AnimatedText';
 
 function InteractiveConstellationCanvas({ scrollRatio }: { scrollRatio: number }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -200,21 +202,25 @@ export default function HeroSection() {
       icon: <Compass size={16} className="text-emerald-400" />,
       title: 'Eager & Adaptable Learner',
       desc: 'An eager learner who is always excited to learn emerging tech stacks, explore new paradigms, and quickly turn theory into clean, production-ready code.',
+      glowColor: 'rgba(16,185,129,0.18)',
     },
     {
       icon: <Sparkles size={16} className="text-cyan-400" />,
       title: 'Applied AI & Computer Vision',
       desc: 'Designing deep convolutional and transformer models for visual perception, feature extraction, and real-time inference.',
+      glowColor: 'rgba(6,182,212,0.18)',
     },
     {
       icon: <Cpu size={16} className="text-blue-400" />,
       title: 'Intelligent Automation & MLOps',
       desc: 'Engineering autonomous execution workflows, distributed model pipelines, and automated end-to-end data processing systems.',
+      glowColor: 'rgba(59,130,246,0.18)',
     },
     {
       icon: <Layers size={16} className="text-violet-400" />,
       title: 'Full-Stack Engineering',
       desc: 'Architecting high-performance backends with Python & FastAPI, paired with modern, responsive React/Next.js interfaces.',
+      glowColor: 'rgba(139,92,246,0.18)',
     },
   ];
 
@@ -233,88 +239,99 @@ export default function HeroSection() {
         style={{ y: heroY, scale: heroScale, opacity: heroOpacity }}
         className="max-w-5xl text-center z-10 flex flex-col items-center"
       >
+        {/* Animmaster Lib: Animated badge with pulse ring */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ type: 'spring', stiffness: 110, damping: 20 }}
-          className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-white/15 bg-white/[0.05] text-xs font-medium text-gray-200 mb-8 backdrop-blur-md shadow-[0_0_24px_rgba(59,130,246,0.18)]"
+          className="relative inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-white/15 bg-white/[0.05] text-xs font-medium text-gray-200 mb-8 backdrop-blur-md shadow-[0_0_24px_rgba(59,130,246,0.22)]"
         >
-          <Sparkles size={14} className="text-brand-accent animate-pulse" />
-          <span>AI/ML Systems · Intelligent Automation · Full-Stack Engineering</span>
+          {/* Skiper UI: Animated border glow */}
+          <span className="absolute inset-0 rounded-full animate-pulse opacity-30" style={{ background: 'linear-gradient(90deg, #3b82f620, #8b5cf620, #10b98120)', filter: 'blur(6px)' }} aria-hidden />
+          <Sparkles size={14} className="text-brand-accent animate-pulse relative z-10" />
+          <span className="relative z-10">AI/ML Systems · Intelligent Automation · Full-Stack Engineering</span>
         </motion.div>
 
+        {/* Animmaster Lib: Word-by-word staggered heading reveal */}
         <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.08 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.01, delay: 0.05 }}
           className="text-6xl sm:text-7xl md:text-8xl font-extrabold mb-5 tracking-tight text-white"
         >
-          Manan <span className="text-gray-500">Garg</span>
+          <AnimatedHeading text="Manan" delay={0.08} />
+          {' '}
+          <AnimatedHeading text="Garg" className="text-gray-500" delay={0.14} />
         </motion.h1>
 
+        {/* Vengeance UI: Flip text subtitle */}
         <motion.h2
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.16 }}
+          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.2 }}
           className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-gradient"
         >
-          AI/ML Engineer · Intelligent Automation &amp; Full-Stack Builder
+          <FlipText primary="AI/ML Engineer" secondary="Systems Architect" className="text-gradient" />
+          {' · '}
+          <FlipText primary="Intelligent Automation" secondary="Computer Vision" className="text-gradient" />
+          {' & '}
+          <FlipText primary="Full-Stack Builder" secondary="MLOps Engineer" className="text-gradient" />
         </motion.h2>
 
         <motion.p
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.24 }}
+          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.28 }}
           className="text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10 text-base md:text-lg"
         >
           Computer Science undergraduate at Bennett University passionate about building scalable software, autonomous systems, and applied machine learning. As an <span className="text-white font-semibold">eager learner who is always excited to learn</span> new technologies, I focus on translating complex algorithmic concepts into robust production applications—from end-to-end MLOps pipelines and intelligent automation to distributed full-stack architectures and computer vision systems.
         </motion.p>
 
+        {/* Vengeance UI: Shine buttons + Animmaster: Magnetic wrapper */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.32 }}
+          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.36 }}
           className="flex flex-wrap gap-4 justify-center mb-14"
         >
-          <motion.a
-            href="#projects"
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-            className="px-8 py-3.5 rounded-full bg-white text-gray-950 font-semibold hover:bg-gray-100 transition-colors shadow-[0_0_30px_rgba(255,255,255,0.25)]"
-          >
-            Explore Featured Engineering
-          </motion.a>
-          <motion.a
-            href="#contact"
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-            className="px-8 py-3.5 rounded-full glass-panel text-white hover:bg-white/10 transition-colors font-medium"
-          >
-            Connect With Me
-          </motion.a>
+          <MagneticWrapper>
+            <ShineButton href="#projects" variant="primary">
+              Explore Featured Engineering
+            </ShineButton>
+          </MagneticWrapper>
+          <MagneticWrapper>
+            <ShineButton href="#contact" variant="glass">
+              Connect With Me
+            </ShineButton>
+          </MagneticWrapper>
         </motion.div>
 
+        {/* Skiper UI: Spotlight 3D tilt pillar cards */}
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.4 }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.44 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full text-left"
         >
           {pillars.map((pillar, idx) => (
-            <motion.div
+            <SpotlightCard
               key={idx}
-              whileHover={{ y: -5, scale: 1.01 }}
-              transition={{ type: 'spring', stiffness: 240, damping: 20 }}
-              className="glass-panel p-5 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-white/25 transition-colors"
+              glowColor={pillar.glowColor}
+              className="glass-panel rounded-2xl border border-white/10 hover:border-white/25 transition-colors"
             >
-              <div className="flex items-center gap-2.5 mb-2">
-                <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                  {pillar.icon}
+              <motion.div
+                variants={staggerItem}
+                className="p-5"
+              >
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div className="p-2 rounded-lg bg-white/5 border border-white/10">
+                    {pillar.icon}
+                  </div>
+                  <h3 className="text-sm font-bold text-white tracking-wide">{pillar.title}</h3>
                 </div>
-                <h3 className="text-sm font-bold text-white tracking-wide">{pillar.title}</h3>
-              </div>
-              <p className="text-xs text-gray-400 leading-relaxed">{pillar.desc}</p>
-            </motion.div>
+                <p className="text-xs text-gray-400 leading-relaxed">{pillar.desc}</p>
+              </motion.div>
+            </SpotlightCard>
           ))}
         </motion.div>
       </motion.div>

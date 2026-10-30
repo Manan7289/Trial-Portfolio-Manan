@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, X, ChevronRight, Activity, Map, Cuboid, CheckCircle2, Sliders } from 'lucide-react';
+import { AnimatedHeading } from './ui/AnimatedText';
 
 // ─────────────────────────────────────────────────────────────
 // CADASTRAAI – Authentic 5-Step Survey Workbench (Singh Nagar, Vijayawada — drone ORI)
@@ -807,7 +808,9 @@ export default function ProjectsSection() {
     <section className="py-24 w-full px-6 max-w-6xl mx-auto" id="projects">
       <div className="flex flex-col items-center text-center mb-16">
         <span className="text-xs font-mono uppercase tracking-widest text-brand-accent mb-2">Interactive Systems Showcase</span>
-        <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">Featured Engineering</h2>
+        <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">
+          <AnimatedHeading text="Featured Engineering" />
+        </h2>
         <div className="w-16 h-1 bg-gradient-to-r from-brand-primary to-brand-accent rounded-full" />
       </div>
 
