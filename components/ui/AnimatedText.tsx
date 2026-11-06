@@ -1,8 +1,10 @@
 'use client';
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { animate, motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 
-// Animmaster Lib: Character-by-character staggered reveal (text scramble + reveal)
+const EASE_OUT = [0.22, 1, 0.36, 1] as const;
+
+/** Word-by-word reveal. Each word slides up from behind a mask. */
 export function AnimatedHeading({
   text,
   className = '',
@@ -12,24 +14,20 @@ export function AnimatedHeading({
   className?: string;
   delay?: number;
 }) {
-  const ref = useRef<HTMLHeadingElement>(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
+  const reduce = useReducedMotion();
   const words = text.split(' ');
 
   return (
-    <span ref={ref} className={`inline-flex flex-wrap gap-x-[0.25em] ${className}`}>
+    <span ref={ref} className={`inline-flex flex-wrap gap-x-[0.25em] ${className}`} aria-label={text}>
       {words.map((word, wi) => (
-        <span key={wi} className="overflow-hidden inline-block">
+        <span key={wi} className="overflow-hidden inline-block pb-[0.25em] -mb-[0.25em]" aria-hidden>
           <motion.span
             className="inline-block"
-            initial={{ y: '110%', opacity: 0 }}
-            animate={inView ? { y: '0%', opacity: 1 } : {}}
-            transition={{
-              type: 'spring',
-              stiffness: 180,
-              damping: 22,
-              delay: delay + wi * 0.06,
-            }}
+            initial={reduce ? false : { y: '105%' }}
+            animate={inView ? { y: '0%' } : undefined}
+            transition={{ duration: 0.7, ease: EASE_OUT, delay: delay + wi * 0.07 }}
           >
             {word}
           </motion.span>
@@ -39,42 +37,38 @@ export function AnimatedHeading({
   );
 }
 
-// Vengeance UI: Animated count-up stat
+/** Number that counts up once when scrolled into view. */
 export function AnimatedStat({
   value,
   label,
   prefix = '',
   suffix = '',
+  decimals = 0,
   color = 'text-brand-primary',
 }: {
   value: number;
   label: string;
   prefix?: string;
   suffix?: string;
+  decimals?: number;
   color?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true });
+  const reduce = useReducedMotion();
+  const count = useMotionValue(reduce ? value : 0);
+  const text = useTransform(count, (v) => `${prefix}${v.toFixed(decimals)}${suffix}`);
+
+  useEffect(() => {
+    if (!inView || reduce) return;
+    const controls = animate(count, value, { duration: 1.4, ease: EASE_OUT });
+    return () => controls.stop();
+  }, [inView, reduce, count, value]);
 
   return (
     <div ref={ref} className="flex flex-col items-center gap-1">
-      <motion.span
-        className={`text-3xl font-extrabold tabular-nums ${color}`}
-        initial={{ opacity: 0, y: 12 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ type: 'spring', stiffness: 120, damping: 20, delay: 0.1 }}
-      >
-        {prefix}
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.2, duration: 0.01 }}
-        >
-          {value}
-        </motion.span>
-        {suffix}
-      </motion.span>
-      <span className="text-xs text-gray-400 font-medium text-center">{label}</span>
+      <motion.span className={`text-3xl font-bold tabular-nums ${color}`}>{text}</motion.span>
+      <span className="text-xs text-gray-400 text-center">{label}</span>
     </div>
   );
 }

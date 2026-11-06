@@ -1,8 +1,9 @@
 'use client';
-import { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, X, ChevronRight, Activity, Map, Cuboid, CheckCircle2, Sliders } from 'lucide-react';
-import { AnimatedHeading } from './ui/AnimatedText';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
+import { X, Sliders } from 'lucide-react';
+import { SectionHead } from './ui/Section';
+import { StaggerContainer, staggerItem } from './ui/InteractiveEffects';
 
 // ─────────────────────────────────────────────────────────────
 // CADASTRAAI – Authentic 5-Step Survey Workbench (Singh Nagar, Vijayawada — drone ORI)
@@ -139,14 +140,17 @@ function CadastralAnimation() {
   const [activeParcelTool, setActiveParcelTool] = useState<string>('Select');
   const [viewMode, setViewMode] = useState<'vector' | 'screenshot'>('vector');
   const [zoom, setZoom] = useState<number>(1);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const onScreen = useInView(rootRef, { amount: 0.2 });
+  const reduce = useReducedMotion();
 
   useEffect(() => {
-    if (!autoCycle) return;
+    if (!autoCycle || !onScreen || reduce) return;
     const timer = setInterval(() => {
       setActiveStep((prev) => (prev === 5 ? 1 : ((prev + 1) as 1 | 2 | 3 | 4 | 5)));
     }, 4200);
     return () => clearInterval(timer);
-  }, [autoCycle]);
+  }, [autoCycle, onScreen, reduce]);
 
   const currentStepMeta = WORKBENCH_STEPS.find((s) => s.step === activeStep) || WORKBENCH_STEPS[3];
   const selectedPlot = DENSE_PLOTS.find((p) => p.id === selectedPlotId) || DENSE_PLOTS[12];
@@ -154,6 +158,7 @@ function CadastralAnimation() {
 
   return (
     <div
+      ref={rootRef}
       className="w-full h-[460px] md:h-[540px] rounded-2xl bg-[#070b0a] border border-emerald-500/30 relative overflow-hidden flex flex-col font-sans select-none shadow-2xl"
       onClick={(e) => e.stopPropagation()}
     >
@@ -186,7 +191,7 @@ function CadastralAnimation() {
                 : 'bg-white/5 text-gray-300 hover:text-white border-white/10'
             }`}
           >
-            {viewMode === 'vector' ? 'View Actual ORI Captures' : 'View Interactive Vector Sim'}
+            {viewMode === 'vector' ? 'Show drone captures' : 'Show vector view'}
           </button>
 
           <button
@@ -198,7 +203,7 @@ function CadastralAnimation() {
                 : 'bg-white/5 text-gray-400 hover:text-white border-white/10'
             }`}
           >
-            {autoCycle ? 'Auto-Step: ON' : 'Auto-Step: OFF'}
+            {autoCycle ? 'Auto-play: on' : 'Auto-play: off'}
           </button>
         </div>
       </div>
@@ -311,6 +316,7 @@ function CadastralAnimation() {
                     className="cursor-pointer"
                   >
                     <rect
+                      className="transition-[fill,stroke,stroke-width] duration-500"
                       x={p.x}
                       y={p.y}
                       width={p.w}
@@ -332,6 +338,7 @@ function CadastralAnimation() {
                       }
                     />
                     <rect
+                      className="transition-[fill,stroke,stroke-width] duration-500"
                       x={p.rx}
                       y={p.ry}
                       width={p.rw}
@@ -357,6 +364,7 @@ function CadastralAnimation() {
                     />
                     {p.hasTree && (
                       <circle
+                        className="transition-[fill] duration-500"
                         cx={p.treeX}
                         cy={p.treeY}
                         r={p.treeR}
@@ -385,7 +393,7 @@ function CadastralAnimation() {
               })}
             </svg>
 
-            {!scanPaused && (
+            {!scanPaused && !reduce && (
               <motion.div
                 className="absolute top-0 bottom-0 left-0 w-full pointer-events-none z-20"
                 initial={{ x: '0%' }}
@@ -725,209 +733,198 @@ const DepthWizardAnimation = () => {
 // MLOPS PIPELINE – Animated Node Graph
 // ─────────────────────────────────────────────────────────────
 const PIPELINE = [
-  { id: '01', label: 'Raw Data Ingestion',       sub: 'Geofabrik OSM · Kaggle Catalogs',     accent: '#3b82f6', pct: 100 },
-  { id: '02', label: 'Feature Engineering & Routing', sub: 'Feature Normalisation · Tokenise', accent: '#8b5cf6', pct: 100 },
-  { id: '03', label: 'Distributed Training',     sub: 'Multi-GPU · Mixed Precision',         accent: '#06b6d4', pct: 92  },
-  { id: '04', label: 'Ensemble Validation',      sub: 'MAE · RMSE · Entity F1 Score',        accent: '#10b981', pct: 88  },
-  { id: '05', label: 'Production Inference',     sub: 'FastAPI · Async REST Endpoint',       accent: '#f59e0b', pct: 100 },
+  { id: '01', label: 'Raw data ingestion',          sub: 'Geofabrik OSM · Kaggle catalogs',     accent: '#3b82f6' },
+  { id: '02', label: 'Feature engineering & routing', sub: 'Normalisation · tokenisation',       accent: '#8b5cf6' },
+  { id: '03', label: 'Distributed training',        sub: 'Multi-GPU · mixed precision',         accent: '#06b6d4' },
+  { id: '04', label: 'Ensemble validation',         sub: 'MAE · RMSE · entity F1',              accent: '#10b981' },
+  { id: '05', label: 'Production inference',        sub: 'FastAPI · async REST endpoint',       accent: '#f59e0b' },
 ];
 
-const MLOpsAnimation = () => (
-  <div className="w-full h-80 rounded-xl bg-[#030712] border border-violet-500/20 relative overflow-hidden flex flex-col justify-center px-6 sm:px-8 py-6 isolate gap-2.5">
-    {PIPELINE.map((stage, i) => (
-      <motion.div
-        key={stage.id}
-        className="relative z-10 flex items-center gap-4 bg-white/[0.02] border border-white/5 rounded-xl px-4 py-2.5 hover:border-white/15 transition-colors"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ type: 'spring', stiffness: 120, damping: 18, delay: i * 0.1 }}
-      >
-        <div
-          className="w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 font-mono text-[9px] font-bold"
-          style={{ borderColor: stage.accent, color: stage.accent, background: `${stage.accent}15` }}
-        >
-          {stage.id}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-white text-xs font-semibold truncate">{stage.label}</p>
-          <p className="text-gray-400 text-[10px] truncate">{stage.sub}</p>
-        </div>
-      </motion.div>
-    ))}
-  </div>
-);
+const MLOpsAnimation = () => {
+  const [active, setActive] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const onScreen = useInView(rootRef, { amount: 0.3 });
+  const reduce = useReducedMotion();
+
+  useEffect(() => {
+    if (!onScreen || reduce) return;
+    const t = setInterval(() => setActive((a) => (a + 1) % PIPELINE.length), 1300);
+    return () => clearInterval(t);
+  }, [onScreen, reduce]);
+
+  return (
+    <div
+      ref={rootRef}
+      className="w-full min-h-80 rounded-xl bg-[#030712] border border-violet-500/20 relative overflow-hidden flex flex-col justify-center px-6 sm:px-8 py-6 isolate gap-2.5"
+    >
+      {/* Data packet travelling down the pipeline */}
+      <div aria-hidden className="absolute left-[2.6rem] sm:left-[3.1rem] top-8 bottom-8 w-px bg-white/10 z-0" />
+      {!reduce && (
+        <motion.span
+          aria-hidden
+          className="absolute left-[2.6rem] sm:left-[3.1rem] -ml-[3px] w-[7px] h-[7px] rounded-full bg-white z-0 shadow-[0_0_10px_2px_rgba(255,255,255,0.6)]"
+          initial={{ top: '2rem', opacity: 0 }}
+          animate={{ top: ['2rem', 'calc(100% - 2rem)'], opacity: [0, 1, 1, 0] }}
+          transition={{ duration: 6.5, repeat: Infinity, ease: 'linear' }}
+        />
+      )}
+
+      {PIPELINE.map((stage, i) => {
+        const isActive = i === active;
+        return (
+          <motion.div
+            key={stage.id}
+            className="relative z-10 flex items-center gap-4 rounded-xl px-4 py-2.5 border transition-colors duration-500"
+            style={{
+              background: isActive ? `${stage.accent}12` : 'rgba(255,255,255,0.02)',
+              borderColor: isActive ? `${stage.accent}66` : 'rgba(255,255,255,0.05)',
+            }}
+            initial={reduce ? false : { opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: i * 0.09 }}
+          >
+            <div
+              className="w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 font-mono text-[9px] font-bold bg-[#030712] transition-colors duration-500"
+              style={{
+                borderColor: stage.accent,
+                color: isActive ? '#030712' : stage.accent,
+                background: isActive ? stage.accent : '#030712',
+              }}
+            >
+              {stage.id}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-xs font-semibold truncate">{stage.label}</p>
+              <p className="text-gray-400 text-[10px] truncate">{stage.sub}</p>
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+};
+
+const PROJECTS = [
+  {
+    id: 'cadastral',
+    n: '01',
+    title: 'CADASTRAAI Survey Workbench',
+    tag: 'Smart India Hackathon · internal Rank 1',
+    tech: 'Python · Computer vision · Leaflet · Kaggle GPU',
+    desc: 'A five-step survey workbench built for the Smart India Hackathon. It runs on 2.9 cm/px OpenAerialMap drone imagery of Singh Nagar, Vijayawada. A roof segmentation model and a land-cover model (62% building, 18% paved, 12% tree) produce 288 outlined roofs and 266 land parcels that can be edited in the browser.',
+    metrics: ['Internal Rank 1', '288 roofs', '266 parcels'],
+    Demo: CadastralAnimation,
+  },
+  {
+    id: 'depth',
+    n: '02',
+    title: 'Depth Wizard',
+    tag: 'SIH26175 · validated against ISRO LiDAR',
+    tech: 'Python · PyTorch · FastAPI · isometric SVG',
+    desc: 'Predicts per-pixel elevation from a single RGB satellite image and builds a 3D digital surface model from it. A convolutional-transformer network reaches 1.41 m MAE and 0.905 Pearson correlation against ISRO LiDAR ground truth.',
+    metrics: ['1.41 m MAE', '3.10 m RMSE', '0.905 correlation'],
+    Demo: DepthWizardAnimation,
+  },
+  {
+    id: 'mlops',
+    n: '03',
+    title: 'MLOps & Entity Resolution Pipeline',
+    tag: 'Amazon ML Challenge',
+    tech: 'Python · Scikit-Learn · FastAPI · distributed training',
+    desc: 'A machine learning and entity-resolution workflow for cleaning up large, noisy product catalogs, built for the Amazon ML Challenge.',
+    metrics: ['5-stage pipeline', 'Multi-GPU training', 'FastAPI serving'],
+    Demo: MLOpsAnimation,
+  },
+];
 
 export default function ProjectsSection() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = PROJECTS.find((p) => p.id === selectedId);
 
-  const projects = useMemo(() => [
-    {
-      id: 'cadastral',
-      title: 'CADASTRAAI Survey Workbench',
-      tag: 'Smart India Hackathon · Rank 1',
-      tech: 'Python · Computer Vision · Leaflet · Kaggle GPU (0.3m ORI)',
-      desc: 'Secured Internal Rank 1 in the Smart India Hackathon for engineering an end-to-end 5-stage geospatial AI workbench tested on 2.9 cm/px OpenAerialMap Drone ORI over Singh Nagar, Vijayawada (Bhuvan). Combines a roof segmentation model with a multi-class land-cover model (62% building, 18% paved open area, 12% tree canopy) to delineate 288 building roofs and synthesize 266 topological land parcels with interactive boundary editing.',
-      metrics: ['SIH College Rank 1', '288 Roofs Outlined', '266 Numbered Plots', '62% Building · 18% Paved · 12% Tree'],
-      icon: <Map size={20} className="text-emerald-400" />,
-      accent: 'emerald',
-      highlight: true,
-      featuredSpan: 'md:col-span-2',
-      animation: <CadastralAnimation />,
-    },
-    {
-      id: 'depth',
-      title: 'Depth Wizard',
-      tag: 'SIH26175 · ISRO LiDAR Validated',
-      tech: 'Python · PyTorch · FastAPI · Isometric SVG Engine',
-      desc: 'Single-view satellite elevation and 3D Digital Surface Model (DSM) synthesis engine. Predicts per-pixel metric elevation directly from monocular 2D RGB satellite imagery using deep convolutional-transformer networks, achieving a 1.41m Direct Metric MAE and 0.905 Pearson correlation against ISRO LiDAR ground truth.',
-      metrics: ['1.41m Direct MAE', '3.10m RMSE', '0.905 Correlation', '0.52m Ground MAE'],
-      icon: <Cuboid size={20} className="text-cyan-400" />,
-      accent: 'cyan',
-      highlight: true,
-      featuredSpan: 'md:col-span-1',
-      animation: <DepthWizardAnimation />,
-    },
-    {
-      id: 'mlops',
-      title: 'MLOps & Entity Resolution Pipeline',
-      tag: 'Amazon ML Challenge · End-to-End',
-      tech: 'Python · Scikit-Learn · FastAPI · Distributed Training',
-      desc: 'Architected a fault-tolerant machine learning and entity resolution workflow for large-scale noisy product catalog normalization in the Amazon ML Challenge.',
-      metrics: ['5-Stage Automated Pipeline', 'Distributed GPU Training', 'Production FastAPI Serving'],
-      icon: <Activity size={20} className="text-violet-400" />,
-      accent: 'violet',
-      highlight: false,
-      featuredSpan: 'md:col-span-1',
-      animation: <MLOpsAnimation />,
-    },
-  ], []);
-
-  const selected = projects.find(p => p.id === selectedId);
+  useEffect(() => {
+    if (!selectedId) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setSelectedId(null);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [selectedId]);
 
   return (
     <section className="py-24 w-full px-6 max-w-6xl mx-auto" id="projects">
-      <div className="flex flex-col items-center text-center mb-16">
-        <span className="text-xs font-mono uppercase tracking-widest text-brand-accent mb-2">Interactive Systems Showcase</span>
-        <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">
-          <AnimatedHeading text="Featured Engineering" />
-        </h2>
-        <div className="w-16 h-1 bg-gradient-to-r from-brand-primary to-brand-accent rounded-full" />
-      </div>
+      <SectionHead n="02" title="Selected work" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {projects.map((project, idx) => (
-          <motion.div
-            key={project.id}
-            layoutId={`card-${project.id}`}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ type: 'spring', stiffness: 110, damping: 20, delay: idx * 0.1 }}
-            onClick={() => setSelectedId(project.id)}
-            whileHover={{ y: -6 }}
-            className={`glass-panel p-8 rounded-2xl cursor-pointer border border-white/10 bg-white/[0.02] relative overflow-hidden group transition-colors duration-300 ${project.featuredSpan}`}
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-3.5">
-                <div className="p-3 bg-black/50 rounded-xl border border-white/10">
-                  {project.icon}
-                </div>
-                <div>
-                  <motion.h3 layoutId={`title-${project.id}`} className="text-xl md:text-2xl font-bold text-white">
-                    {project.title}
-                  </motion.h3>
-                  <span className="text-[11px] font-semibold text-gray-400 tracking-wider uppercase">{project.tag}</span>
-                </div>
+      <StaggerContainer as="ul" staggerDelay={0.12}>
+        {PROJECTS.map((p) => (
+          <motion.li key={p.id} variants={staggerItem} className="border-t border-rule last:border-b">
+            <button
+              type="button"
+              onClick={() => setSelectedId(p.id)}
+              className="group w-full text-left grid md:grid-cols-12 gap-x-8 gap-y-3 py-9 md:py-11 px-2 -mx-2 hover:bg-paper-deep/70 transition-colors cursor-pointer"
+            >
+              <span className="md:col-span-1 font-mono text-xs text-accent pt-2">{p.n}</span>
+              <div className="md:col-span-5">
+                <h3 className="font-serif text-3xl md:text-4xl leading-[1.05] tracking-tight transition-transform duration-300 group-hover:translate-x-1">
+                  {p.title}
+                </h3>
+                <p className="font-mono text-xs uppercase tracking-wider text-muted mt-3">{p.tag}</p>
               </div>
-              {project.highlight && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[11px] font-semibold text-emerald-400 shrink-0">
-                  <Trophy size={13} /> Benchmark Winner
-                </span>
-              )}
-            </div>
-
-            <div className="text-[11px] font-mono font-semibold text-gray-400 mb-4 tracking-wider uppercase">
-              {project.tech}
-            </div>
-
-            <p className="text-gray-300 leading-relaxed text-sm mb-6">
-              {project.desc}
-            </p>
-
-            {project.id === 'cadastral' && (
-              <div className="mb-6">
-                <CadastralAnimation />
+              <div className="md:col-span-5">
+                <p className="leading-relaxed text-ink/80">{p.desc}</p>
+                <p className="font-mono text-xs text-muted mt-4">{p.tech}</p>
+                <p className="font-mono text-xs mt-2">{p.metrics.join('  ·  ')}</p>
               </div>
-            )}
-
-            <div className="flex flex-wrap gap-2 mb-6">
-              {project.metrics.map(m => (
-                <span key={m} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-xs text-gray-200 font-medium">
-                  <CheckCircle2 size={12} className="text-brand-accent" />
-                  {m}
-                </span>
-              ))}
-            </div>
-
-            <div className="flex items-center text-sm font-semibold text-white/60 group-hover:text-white transition-colors">
-              <span>Launch Interactive Visualizer</span>
-              <ChevronRight size={16} className="ml-1 group-hover:translate-x-1.5 transition-transform" />
-            </div>
-          </motion.div>
+              <span
+                aria-hidden
+                className="md:col-span-1 md:text-right font-mono text-xs uppercase tracking-wider pt-2 text-muted group-hover:text-accent transition-colors"
+              >
+                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">Open →</span>
+              </span>
+            </button>
+          </motion.li>
         ))}
-      </div>
+      </StaggerContainer>
 
       <AnimatePresence>
-        {selectedId && selected && (
+        {selected && (
           <div
             className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10"
             role="dialog"
             aria-modal="true"
+            aria-label={selected.title}
           >
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-[#030712]/92 backdrop-blur-md"
+              className="absolute inset-0 bg-ink/70 backdrop-blur-[2px]"
               onClick={() => setSelectedId(null)}
             />
-
             <motion.div
-              layoutId={`card-${selectedId}`}
-              transition={{ type: 'spring', stiffness: 180, damping: 24 }}
-              className="w-full max-w-5xl bg-[#080e1a]/95 border border-white/15 rounded-3xl relative z-10 flex flex-col overflow-y-auto max-h-[90vh] shadow-2xl custom-scrollbar p-6 sm:p-8 md:p-10 gap-6 will-change-transform"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full max-w-5xl bg-paper text-ink rounded-sm relative z-10 flex flex-col overflow-y-auto max-h-[90vh] shadow-2xl p-6 sm:p-8 md:p-10 gap-6"
             >
               <button
                 type="button"
-                aria-label="Close modal"
                 onClick={() => setSelectedId(null)}
-                className="absolute top-5 right-5 z-50 p-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-white transition-colors"
+                className="absolute top-5 right-5 z-50 font-mono text-xs uppercase tracking-wider text-muted hover:text-accent transition-colors cursor-pointer inline-flex items-center gap-2"
               >
-                <X size={18} />
+                Close <X size={14} />
               </button>
-
-              <div className="flex items-center gap-4">
-                <div className="p-3.5 bg-black/50 rounded-2xl border border-white/10">
-                  {selected.icon}
-                </div>
-                <div>
-                  <motion.h3
-                    layoutId={`title-${selectedId}`}
-                    className="text-3xl md:text-4xl font-bold text-white tracking-tight"
-                  >
-                    {selected.title}
-                  </motion.h3>
-                  <p className="text-xs font-mono font-semibold text-gray-400 tracking-widest uppercase mt-1">{selected.tech}</p>
-                </div>
+              <div>
+                <p className="font-mono text-xs uppercase tracking-wider text-accent mb-2">{selected.n} · {selected.tag}</p>
+                <h3 className="font-serif text-3xl md:text-5xl tracking-tight leading-tight pr-20">{selected.title}</h3>
               </div>
-
-              <div className="w-full rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-                {selected.animation}
+              <div className="w-full rounded-sm overflow-hidden">
+                <selected.Demo />
               </div>
-
-              <p className="text-gray-300 leading-relaxed text-base max-w-4xl">
-                {selected.desc}
-              </p>
+              <p className="leading-relaxed text-ink/80 max-w-3xl">{selected.desc}</p>
             </motion.div>
           </div>
         )}

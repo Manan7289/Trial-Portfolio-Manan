@@ -1,347 +1,68 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ChevronDown, Sparkles, Compass, Cpu, Layers } from 'lucide-react';
-import { ShineButton, MagneticWrapper, SpotlightCard, staggerItem } from './ui/InteractiveEffects';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { AnimatedHeading } from './ui/AnimatedText';
 
-function InteractiveConstellationCanvas({ scrollRatio }: { scrollRatio: number }) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const mouseRef = useRef<{ x: number; y: number; active: boolean }>({ x: -1000, y: -1000, active: false });
-  const scrollRef = useRef<number>(0);
+const EASE = [0.22, 1, 0.36, 1] as const;
 
-  useEffect(() => {
-    scrollRef.current = scrollRatio;
-  }, [scrollRatio]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d', { alpha: true });
-    if (!ctx) return;
-
-    let animId = 0;
-    let isVisible = true;
-    let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || window.innerHeight);
-
-    const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-      height = canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseRef.current = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-        active: true,
-      };
-    };
-
-    const handleMouseLeave = () => {
-      mouseRef.current.active = false;
-    };
-
-    window.addEventListener('resize', handleResize, { passive: true });
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('mouseleave', handleMouseLeave, { passive: true });
-
-    // Pause animation when hero is off-screen to eliminate background lag
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isVisible = entry.isIntersecting;
-        if (isVisible && !animId) {
-          animId = requestAnimationFrame(render);
-        }
-      },
-      { threshold: 0.05 }
-    );
-    observer.observe(canvas);
-
-    // Highly optimized node count: 32-38 nodes provides full starry density without lag
-    const count = Math.min(38, Math.max(22, Math.floor((width * height) / 32000)));
-    const nodes = Array.from({ length: count }, (_, i) => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      r: 1.4 + (i % 3) * 0.6,
-      hue: i % 3 === 0 ? '#60a5fa' : i % 3 === 1 ? '#a78bfa' : '#34d399',
-      depth: 0.4 + (i % 5) * 0.18,
-    }));
-
-    const render = () => {
-      if (!isVisible) {
-        animId = 0;
-        return;
-      }
-
-      ctx.clearRect(0, 0, width, height);
-      const sp = scrollRef.current;
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
-      const mActive = mouseRef.current.active;
-
-      // Mouse glow
-      if (mActive && mx >= 0 && my >= 0) {
-        const grad = ctx.createRadialGradient(mx, my, 8, mx, my, 220);
-        grad.addColorStop(0, 'rgba(59, 130, 246, 0.12)');
-        grad.addColorStop(0.5, 'rgba(139, 92, 246, 0.05)');
-        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, width, height);
-      }
-
-      // Update positions
-      for (let i = 0; i < nodes.length; i++) {
-        const n = nodes[i];
-        n.x += n.vx * (1 + sp * 1.2);
-        n.y += n.vy - sp * 0.25 * n.depth;
-
-        if (n.x < 0) n.x = width;
-        if (n.x > width) n.x = 0;
-        if (n.y < 0) n.y = height;
-        if (n.y > height) n.y = 0;
-
-        if (mActive) {
-          const dx = mx - n.x;
-          const dy = my - n.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 160 && dist > 1) {
-            const force = ((160 - dist) / 160) * 0.7;
-            n.x += (dx / dist) * force;
-            n.y += (dy / dist) * force;
-          }
-        }
-
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = n.hue;
-        ctx.globalAlpha = 0.65;
-        ctx.fill();
-      }
-
-      // Batch all network lines in one single stroke for maximum GPU/CPU efficiency
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(148, 163, 184, 0.12)';
-      ctx.lineWidth = 0.75;
-      for (let i = 0; i < nodes.length; i++) {
-        const n = nodes[i];
-        for (let j = i + 1; j < nodes.length; j++) {
-          const n2 = nodes[j];
-          const dx = n.x - n2.x;
-          const dy = n.y - n2.y;
-          if (Math.abs(dx) < 120 && Math.abs(dy) < 120) {
-            const dist = Math.hypot(dx, dy);
-            if (dist < 120) {
-              ctx.moveTo(n.x, n.y);
-              ctx.lineTo(n2.x, n2.y);
-            }
-          }
-        }
-      }
-      ctx.stroke();
-
-      // Mouse connection lines
-      if (mActive) {
-        ctx.beginPath();
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 0.85;
-        ctx.globalAlpha = 0.45;
-        for (let i = 0; i < nodes.length; i++) {
-          const n = nodes[i];
-          const dx = mx - n.x;
-          const dy = my - n.y;
-          if (Math.abs(dx) < 170 && Math.abs(dy) < 170) {
-            const dist = Math.hypot(dx, dy);
-            if (dist < 170) {
-              ctx.moveTo(n.x, n.y);
-              ctx.lineTo(mx, my);
-            }
-          }
-        }
-        ctx.stroke();
-      }
-
-      ctx.globalAlpha = 1;
-      animId = requestAnimationFrame(render);
-    };
-
-    animId = requestAnimationFrame(render);
-    return () => {
-      cancelAnimationFrame(animId);
-      observer.disconnect();
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0 will-change-transform" />;
-}
+const facts = [
+  ['Studying', 'B.Tech in Computer Science, Bennett University (2024–2028)'],
+  ['Working on', 'Computer vision, ML pipelines, full-stack software'],
+  ['Recognition', 'Rank 1, Smart India Hackathon internal round'],
+];
 
 export default function HeroSection() {
+  const reduce = useReducedMotion();
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 650], [0, -70]);
-  const heroScale = useTransform(scrollY, [0, 650], [1, 0.93]);
-  const heroOpacity = useTransform(scrollY, [0, 550], [1, 0.15]);
-  const ringRotate = useTransform(scrollY, [0, 800], [0, 55]);
+  const nameY = useTransform(scrollY, [0, 600], [0, reduce ? 0 : -50]);
 
-  const [scrollRatio, setScrollRatio] = useState(0);
-
-  useEffect(() => {
-    return scrollY.on('change', (latest) => {
-      setScrollRatio(Math.min(1, Math.max(0, latest / 650)));
-    });
-  }, [scrollY]);
-
-  const pillars = [
-    {
-      icon: <Compass size={16} className="text-emerald-400" />,
-      title: 'Eager & Adaptable Learner',
-      desc: 'An eager learner who is always excited to learn emerging tech stacks, explore new paradigms, and quickly turn theory into clean, production-ready code.',
-      glowColor: 'rgba(16,185,129,0.18)',
-    },
-    {
-      icon: <Sparkles size={16} className="text-cyan-400" />,
-      title: 'Applied AI & Computer Vision',
-      desc: 'Designing deep convolutional and transformer models for visual perception, feature extraction, and real-time inference.',
-      glowColor: 'rgba(6,182,212,0.18)',
-    },
-    {
-      icon: <Cpu size={16} className="text-blue-400" />,
-      title: 'Intelligent Automation & MLOps',
-      desc: 'Engineering autonomous execution workflows, distributed model pipelines, and automated end-to-end data processing systems.',
-      glowColor: 'rgba(59,130,246,0.18)',
-    },
-    {
-      icon: <Layers size={16} className="text-violet-400" />,
-      title: 'Full-Stack Engineering',
-      desc: 'Architecting high-performance backends with Python & FastAPI, paired with modern, responsive React/Next.js interfaces.',
-      glowColor: 'rgba(139,92,246,0.18)',
-    },
-  ];
+  const fade = (delay: number) => ({
+    initial: reduce ? false : { opacity: 0, y: 14 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, ease: EASE, delay },
+  });
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center relative w-full px-6 py-20 overflow-hidden" id="home">
-      {/* Cursor & Scroll Reactive Neural Constellation Canvas */}
-      <InteractiveConstellationCanvas scrollRatio={scrollRatio} />
+    <section id="home" className="relative w-full max-w-6xl mx-auto px-6 pt-16 md:pt-24 pb-24 min-h-[calc(100vh-4rem)] flex flex-col justify-between">
+      <motion.p {...fade(0)} className="font-mono text-xs uppercase tracking-wider text-muted">
+        Portfolio · 2026
+      </motion.p>
 
-      {/* Scroll-Reactive Orbital Rings */}
-      <motion.div
-        style={{ rotate: ringRotate }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[560px] h-[560px] rounded-full border border-dashed border-brand-primary/15 pointer-events-none -z-10"
-      />
-
-      <motion.div
-        style={{ y: heroY, scale: heroScale, opacity: heroOpacity }}
-        className="max-w-5xl text-center z-10 flex flex-col items-center"
-      >
-        {/* Animmaster Lib: Animated badge with pulse ring */}
-        <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20 }}
-          className="relative inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-white/15 bg-white/[0.05] text-xs font-medium text-gray-200 mb-6 backdrop-blur-md shadow-[0_0_24px_rgba(59,130,246,0.22)]"
-        >
-          {/* Skiper UI: Animated border glow */}
-          <span className="absolute inset-0 rounded-full animate-pulse opacity-30" style={{ background: 'linear-gradient(90deg, #3b82f620, #8b5cf620, #10b98120)', filter: 'blur(6px)' }} aria-hidden />
-          <Sparkles size={14} className="text-brand-accent animate-pulse relative z-10" />
-          <span className="relative z-10">AI/ML Systems · Intelligent Automation · Full-Stack Engineering</span>
-        </motion.div>
-
-        {/* Animmaster Lib: Word-by-word staggered heading reveal */}
+      <div className="py-12 md:py-14">
         <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.01, delay: 0.05 }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-4 tracking-tight text-white"
+          style={{ y: nameY }}
+          className="font-serif font-light tracking-[-0.04em] leading-[0.88] text-[clamp(4rem,13vw,10.5rem)]"
         >
-          <AnimatedHeading text="Manan" delay={0.08} />
-          {' '}
-          <AnimatedHeading text="Garg" className="text-gray-500" delay={0.14} />
+          <span className="block">
+            <AnimatedHeading text="Manan" delay={0.1} />
+          </span>
+          <span className="block italic text-accent">
+            <AnimatedHeading text="Garg" delay={0.22} />
+          </span>
         </motion.h1>
+      </div>
 
-        {/* Clean, high-impact gradient subtitle without clipping artifacts */}
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.16 }}
-          className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold mb-5 text-gradient"
-        >
-          AI/ML Engineer · Intelligent Automation &amp; Full-Stack Builder
-        </motion.h2>
-
+      <div className="grid md:grid-cols-12 gap-10 md:gap-6 items-end">
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.22 }}
-          className="text-gray-300 max-w-2xl mx-auto leading-relaxed mb-8 text-sm sm:text-base md:text-lg"
+          {...fade(0.5)}
+          className="md:col-span-6 font-serif text-2xl md:text-3xl leading-snug tracking-tight"
         >
-          Computer Science undergraduate at Bennett University passionate about building scalable software, autonomous systems, and applied machine learning. As an <span className="text-white font-semibold">eager learner who is always excited to learn</span> new technologies, I focus on translating complex algorithmic concepts into robust production applications—from end-to-end MLOps pipelines and intelligent automation to distributed full-stack architectures and computer vision systems.
+          I build machine learning systems and the software around them: models for aerial imagery, and the APIs and interfaces that make them usable.
         </motion.p>
 
-        {/* Vengeance UI: Shine buttons + Animmaster: Magnetic wrapper */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.28 }}
-          className="flex flex-wrap gap-4 justify-center mb-10"
-        >
-          <MagneticWrapper>
-            <ShineButton href="#projects" variant="primary">
-              Explore Featured Engineering
-            </ShineButton>
-          </MagneticWrapper>
-          <MagneticWrapper>
-            <ShineButton href="#contact" variant="glass">
-              Connect With Me
-            </ShineButton>
-          </MagneticWrapper>
-        </motion.div>
-
-        {/* Skiper UI: Spotlight 3D tilt pillar cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 w-full text-left"
-        >
-          {pillars.map((pillar, idx) => (
-            <SpotlightCard
-              key={idx}
-              glowColor={pillar.glowColor}
-              className="glass-panel rounded-2xl border border-white/10 hover:border-white/25 transition-colors"
-            >
-              <motion.div
-                variants={staggerItem}
-                className="p-4 sm:p-5"
-              >
-                <div className="flex items-center gap-2.5 mb-2">
-                  <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                    {pillar.icon}
-                  </div>
-                  <h3 className="text-sm font-bold text-white tracking-wide">{pillar.title}</h3>
-                </div>
-                <p className="text-xs text-gray-400 leading-relaxed">{pillar.desc}</p>
-              </motion.div>
-            </SpotlightCard>
+        <motion.dl {...fade(0.65)} className="md:col-span-5 md:col-start-8 text-sm">
+          {facts.map(([k, v]) => (
+            <div key={k} className="grid grid-cols-[6.5rem_1fr] gap-4 py-3 border-t border-rule last:border-b">
+              <dt className="font-mono text-xs uppercase tracking-wider text-muted pt-0.5">{k}</dt>
+              <dd className="leading-relaxed">{v}</dd>
+            </div>
           ))}
-        </motion.div>
-      </motion.div>
+        </motion.dl>
+      </div>
 
-      <motion.a
-        href="#about"
-        aria-label="Scroll to About section"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
-        className="mt-12 text-gray-400 hover:text-white transition-colors z-10 flex flex-col items-center gap-1"
-      >
-        <span className="text-[10px] font-mono uppercase tracking-widest text-gray-500">Scroll or Move Cursor</span>
-        <ChevronDown size={26} />
-      </motion.a>
+      <motion.div {...fade(0.8)} className="mt-12 flex gap-8 font-mono text-xs uppercase tracking-wider">
+        <a href="#projects" className="rule-link pb-1">See work ↓</a>
+        <a href="#contact" className="rule-link pb-1">Get in touch</a>
+      </motion.div>
     </section>
   );
 }
