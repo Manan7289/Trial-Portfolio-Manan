@@ -44,6 +44,8 @@ software-in-the-loop run (signed record, commit `bf5401f`). To regenerate it, ke
 each `log` row (rounded to 0.1), plus `events`, `metrics` and the `record` fields shown in the file's
 `FlightRecord` type.
 
+Changes, testing and known limitations are in [PROJECT_REVIEW_REPORT.md](PROJECT_REVIEW_REPORT.md).
+
 ## Accessibility and motion
 
 - Reduced motion: `MotionConfig reducedMotion="user"` covers every Framer Motion animation. The flight replay

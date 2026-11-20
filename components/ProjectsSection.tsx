@@ -14,7 +14,7 @@ const DEMOS: Partial<Record<Project['id'], React.ComponentType>> = {
   depth: DepthWizardDemo,
 };
 
-function RowBody({ p, dim }: { p: Project; dim: boolean }) {
+function RowBody({ p, match }: { p: Project; match: boolean }) {
   return (
     <>
       <span className="md:col-span-1 font-mono text-xs text-accent pt-2">{p.n}</span>
@@ -23,6 +23,7 @@ function RowBody({ p, dim }: { p: Project; dim: boolean }) {
           {p.title}
         </h3>
         <p className="font-mono text-xs uppercase tracking-wider text-muted mt-3">{p.tag}</p>
+        {match && <p className="mt-3 inline-block font-mono text-[11px] uppercase tracking-wider bg-ink text-paper px-2 py-0.5">Matches</p>}
       </div>
       <div className="md:col-span-5">
         <p className="leading-relaxed text-ink/80">{p.summary}</p>
@@ -32,7 +33,6 @@ function RowBody({ p, dim }: { p: Project; dim: boolean }) {
       <span aria-hidden className="md:col-span-1 md:text-right font-mono text-xs uppercase tracking-wider pt-2 text-muted group-hover:text-accent transition-colors">
         <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">{p.href ? 'Read →' : 'Open →'}</span>
       </span>
-      {dim && <span className="sr-only">(does not use the selected capability)</span>}
     </>
   );
 }
@@ -50,6 +50,7 @@ export default function ProjectsSection() {
   return (
     <section className="py-24 w-full px-6 max-w-6xl mx-auto" id="work">
       <SectionHead n="01" title="Selected work" />
+      <h2 className="sr-only">Selected work</h2>
 
       <div className="mb-10">
         <p id="cap-label" className="font-mono text-xs uppercase tracking-wider text-muted mb-3">
@@ -78,20 +79,21 @@ export default function ProjectsSection() {
 
       <StaggerContainer as="ul" staggerDelay={0.12}>
         {PROJECTS.map((p) => {
-          const dim = !!filter && !p.capabilities.includes(filter);
+          const match = !!filter && p.capabilities.includes(filter);
           return (
             <motion.li
               key={p.id}
               variants={staggerItem}
-              className={`border-t border-rule last:border-b transition-opacity duration-300 ${dim ? 'opacity-30' : ''}`}
+              className={`relative border-t border-rule last:border-b transition-colors duration-300 ${match ? 'bg-paper-deep/60' : ''}`}
             >
+              {match && <span aria-hidden className="absolute left-0 top-0 bottom-0 w-[3px] -ml-3 bg-accent" />}
               {p.href ? (
                 <Link href={p.href} className={rowClass}>
-                  <RowBody p={p} dim={dim} />
+                  <RowBody p={p} match={match} />
                 </Link>
               ) : (
                 <button type="button" onClick={() => setOpenId(p.id)} className={rowClass} aria-haspopup="dialog">
-                  <RowBody p={p} dim={dim} />
+                  <RowBody p={p} match={match} />
                 </button>
               )}
             </motion.li>

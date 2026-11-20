@@ -112,7 +112,7 @@ export default function ExperienceSection() {
                   <p className="font-serif text-lg leading-snug">{cert.name}</p>
                   <p className="text-sm text-muted mt-0.5">{cert.org}</p>
                 </div>
-                <span className={`font-mono text-[10px] uppercase tracking-wider pt-1.5 shrink-0 ${cert.active ? 'text-accent' : 'text-muted'}`}>
+                <span className={`font-mono text-[11px] uppercase tracking-wider pt-1.5 shrink-0 ${cert.active ? 'text-accent' : 'text-muted'}`}>
                   {cert.status}
                 </span>
               </motion.li>

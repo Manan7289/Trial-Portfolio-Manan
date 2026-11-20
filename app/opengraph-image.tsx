@@ -29,7 +29,7 @@ export default function Image() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', fontSize: 24, color: '#6b665c' }}>
-          <div style={{ display: 'flex', width: 64, height: 6, background: '#c8431c', marginRight: 20 }} />
+          <div style={{ display: 'flex', width: 64, height: 6, background: '#b63b16', marginRight: 20 }} />
           B.Tech Computer Science · Bennett University · 2028
         </div>
       </div>
