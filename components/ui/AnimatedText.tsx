@@ -20,7 +20,8 @@ export function AnimatedHeading({
   const words = text.split(' ');
 
   return (
-    <span ref={ref} className={`inline-flex flex-wrap gap-x-[0.25em] ${className}`} aria-label={text}>
+    <span ref={ref} className={`inline-flex flex-wrap gap-x-[0.25em] ${className}`}>
+      <span className="sr-only">{text}</span>
       {words.map((word, wi) => (
         <span key={wi} className="overflow-hidden inline-block pb-[0.25em] -mb-[0.25em]" aria-hidden>
           <motion.span

@@ -16,7 +16,8 @@ the previous dark theme and figures that have since been corrected.
 | Resume | `public/Manan_Garg_Resume.pdf`, linked from the nav, hero, case study and contact section | the site had no resume |
 | Privacy | phone number removed from the site | not needed for first contact |
 | Metadata | title template, description, Open Graph, `opengraph-image`, JSON-LD Person, `robots.txt`, `sitemap.xml`, canonical URL | robots, sitemap and the link-preview image previously returned 404 |
-| Accessibility | `MotionConfig reducedMotion="user"`; dialog focus trap and restore; skip link; `aria-controls` on the mobile menu; hidden h2 for the Work section; accent deepened from #c8431c to #b63b16; 10 px labels raised to 11 px | see section 3 |
+| Accessibility | `MotionConfig reducedMotion="user"`; dialog focus trap and restore; skip link; `aria-controls` on the mobile menu; hidden h2 for the Work section; accent deepened from #c8431c to #b63b16; 10 px labels raised to 11 px; animated headings expose text through a screen-reader-only span instead of `aria-label` | see section 3 |
+| Loading | hero entrance moved to a CSS animation (`.rise`) so it paints with the HTML; `<noscript>` style shows scroll-revealed content when JavaScript is off | see section 3 |
 
 ## 2. Dependencies
 
@@ -46,17 +47,20 @@ All on a production build (`next build --webpack`, then `next start`), on Window
 | Structural accessibility (scripted DOM checks) | `lang` set; one h1 per page; no heading-level skips after the fix; every image has alt text; every button and link has a name; no duplicate ids; every `aria-labelledby` target exists; scrollable regions are focusable |
 | Colour contrast (WCAG 2.x formula) | body and muted text 4.97–15.4:1; dark-panel text 4.78–8.2:1; accent was 4.28:1 for small text (fail), now 5.05:1 on paper and 4.53:1 on the hover tint |
 | Resume PDF | identical (SHA-1) to the v5 robotics resume; one A4 page, so it prints as is |
-| Loading (home, local production server) | 11 KB HTML, 8 KB CSS, about 202 KB JavaScript, 142 KB fonts, 16 requests, cumulative layout shift 0.001 |
+| Loading (home, local production server) | 11 KB HTML, 8 KB CSS, about 202 KB JavaScript, 142 KB fonts, 16 requests |
+| Lighthouse 13 via Chrome DevTools (home, desktop and mobile) | Accessibility 100, Best Practices 100, SEO 100, Agentic Browsing 100. The first run scored Accessibility 92 (`aria-label` on plain spans in the animated headings; nav numbers at 2.35:1); both were fixed |
+| Lighthouse (case study, mobile) | Accessibility 100, Best Practices 100, SEO 100 |
+| Performance trace (cold cache, 412 px mobile, 4× CPU, Slow 4G) | case study: LCP 2.39 s, CLS 0.00. Home: LCP 6.65 s, then **3.80 s** after the hero's entrance moved from Framer Motion (which waited for hydration) to a CSS animation; CLS 0.00 |
+| Without JavaScript (scripts blocked in a sandboxed frame) | all 34 initially hidden elements display, including the hero name, after adding a `<noscript>` style |
 
 ## 4. Known limitations
 
-- **No full automated accessibility audit.** An axe-core run was blocked, because it would have loaded a
-  third-party script into the page. The scripted checks above cover the structural rules but not everything axe
-  checks.
-- **No paint timings (FCP, LCP).** The browser pane was hidden during testing, so pages did not paint. Run
-  Lighthouse on the deployed site to get them.
-- **Below-the-fold content starts at opacity 0** until scrolled into view. With JavaScript disabled it stays
-  hidden. Search engines that run JavaScript are unaffected.
+- **Home-page LCP is 3.8 s on a throttled phone**, in Google's "needs improvement" band. The LCP element is the hero
+  paragraph, and most of the remaining delay is the Fraunces web font arriving and swapping in. Preloading or
+  subsetting that font is the next fix.
+- **One Lighthouse mobile run of the case study reported CLS 0.18.** Two DevTools traces under the same throttling
+  (one warm, one cold cache) measured 0.00, and the report did not name the shifting elements. Check it on the
+  deployed site with PageSpeed Insights.
 - **The dronecore repository is private**, so the case study offers code access by email rather than a link.
 - **Public media from a private project:** the dronecore screenshots and the 2 MB demo video are public once this
   is deployed.
@@ -65,9 +69,8 @@ All on a production build (`next build --webpack`, then `next start`), on Window
 
 ## 5. Remaining improvements
 
-1. Run Lighthouse and an axe audit on the deployed preview.
+1. Run PageSpeed Insights on the deployed preview (real network, field data once traffic exists); preload or subset the Fraunces font.
 2. Decide dronecore's repository visibility; link the code if it becomes public.
 3. Remove `lucide-react`; update `system-instructions.md` (it still asks for a dark glass theme); replace or delete
    `MANAN_GARG_Resume_Updated.tex` and `resume_print.html`, which hold the old resume claims.
-4. Make reveal animations progressive (content visible without JavaScript).
 5. Replace the dronecore media as the project gains bench or flight evidence.

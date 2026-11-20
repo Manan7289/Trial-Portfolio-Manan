@@ -44,6 +44,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className="grain antialiased min-h-screen flex flex-col bg-paper text-ink">
+        {/* Without JavaScript the scroll reveals never run: show their end state instead */}
+        <noscript>
+          <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}[style*="translateY(105%)"],[style*="scaleX(0)"]{transform:none!important}`}</style>
+        </noscript>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[200] focus:bg-ink focus:text-paper focus:px-4 focus:py-2 font-mono text-xs uppercase tracking-wider"

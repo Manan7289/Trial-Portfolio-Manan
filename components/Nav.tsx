@@ -46,7 +46,7 @@ export default function Nav() {
               aria-current={active === l.id ? 'true' : undefined}
               className={`transition-colors ${active === l.id ? 'text-accent' : 'text-muted hover:text-ink'}`}
             >
-              <span className="opacity-60">0{i + 1}</span> {l.label}
+              <span aria-hidden>0{i + 1}</span> {l.label}
             </a>
           ))}
           <a href={RESUME_PDF} target="_blank" rel="noopener" className="text-ink hover:text-accent transition-colors">
