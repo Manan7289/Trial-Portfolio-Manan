@@ -59,6 +59,54 @@ section[id] {
   background-size: 100% 100%;
 }
 
+/* Dark instrument panels for data and demos */
+.screen {
+  background: #161411;
+  color: var(--color-paper);
+  box-shadow: 0 1px 0 rgba(26, 24, 21, 0.2), 0 18px 40px -24px rgba(26, 24, 21, 0.55);
+}
+
+/* Tactile controls: lift on hover, press down on click */
+.press {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.press:active {
+  transform: translateY(1px);
+}
+.btn-ink {
+  padding: 0.8rem 1.1rem;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  border: 1px solid var(--color-ink);
+  box-shadow: 3px 3px 0 var(--color-accent);
+}
+.btn-ink:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--color-accent);
+}
+.btn-ink:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--color-accent);
+}
+.btn-line {
+  padding: 0.8rem 1.1rem;
+  border: 1px solid var(--color-rule);
+  color: var(--color-ink);
+}
+.btn-line:hover {
+  border-color: var(--color-ink);
+  box-shadow: 3px 3px 0 var(--color-ink);
+  transform: translate(-1px, -1px);
+}
+.btn-line:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0 0 0 var(--color-ink);
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
@@ -80,5 +128,9 @@ section[id] {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  .press:hover,
+  .press:active {
+    transform: none !important;
   }
 }

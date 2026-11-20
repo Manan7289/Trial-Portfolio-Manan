@@ -1,19 +1,19 @@
 'use client';
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import Link from 'next/link';
+import { motion, useReducedMotion } from 'framer-motion';
 import { AnimatedHeading } from './ui/AnimatedText';
+import FlightPanel from './FlightPanel';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const facts = [
-  ['Studying', 'B.Tech in Computer Science, Bennett University (2024–2028)'],
-  ['Working on', 'Computer vision, ML pipelines, full-stack software'],
-  ['Recognition', 'Rank 1, Smart India Hackathon internal round'],
+  ['Building', 'dronecore: onboard autonomy for multirotors, validated on PX4 and ArduPilot in software-in-the-loop'],
+  ['Studying', 'B.Tech Computer Science, Bennett University (2024–2028)'],
+  ['Looking for', 'A 4–6 month robotics, UAV or autonomy software internship. Open to international roles.'],
 ];
 
 export default function HeroSection() {
   const reduce = useReducedMotion();
-  const { scrollY } = useScroll();
-  const nameY = useTransform(scrollY, [0, 600], [0, reduce ? 0 : -50]);
 
   const fade = (delay: number) => ({
     initial: reduce ? false : { opacity: 0, y: 14 },
@@ -22,47 +22,53 @@ export default function HeroSection() {
   });
 
   return (
-    <section id="home" className="relative w-full max-w-6xl mx-auto px-6 pt-16 md:pt-24 pb-24 min-h-[calc(100vh-4rem)] flex flex-col justify-between">
+    <section id="home" className="relative w-full max-w-6xl mx-auto px-6 pt-12 md:pt-16 pb-20">
       <motion.p {...fade(0)} className="font-mono text-xs uppercase tracking-wider text-muted">
-        Portfolio · 2026
+        Robotics and autonomy software
       </motion.p>
 
-      <div className="py-12 md:py-14">
-        <motion.h1
-          style={{ y: nameY }}
-          className="font-serif font-light tracking-[-0.04em] leading-[0.88] text-[clamp(4rem,13vw,10.5rem)]"
-        >
-          <span className="block">
-            <AnimatedHeading text="Manan" delay={0.1} />
-          </span>
-          <span className="block italic text-accent">
-            <AnimatedHeading text="Garg" delay={0.22} />
-          </span>
-        </motion.h1>
+      <div className="grid lg:grid-cols-12 gap-10 lg:gap-8 mt-8 items-start">
+        <div className="lg:col-span-6">
+          <h1 className="font-serif font-light tracking-[-0.04em] leading-[0.88] text-[clamp(3.6rem,10vw,8rem)]">
+            <span className="block">
+              <AnimatedHeading text="Manan" delay={0.1} />
+            </span>
+            <span className="block italic text-accent">
+              <AnimatedHeading text="Garg" delay={0.22} />
+            </span>
+          </h1>
+
+          <motion.p {...fade(0.45)} className="mt-10 font-serif text-2xl md:text-[1.7rem] leading-snug tracking-tight max-w-xl">
+            I write autonomy software for drones: deciding on board when the aircraft can no longer trust its position, sensors,
+            battery or the weather, and testing that in simulation before anything flies.
+          </motion.p>
+
+          <motion.div {...fade(0.6)} className="mt-10 flex flex-wrap gap-3 font-mono text-xs uppercase tracking-wider">
+            <Link href="/work/dronecore" className="press btn-ink">
+              dronecore case study →
+            </Link>
+            <a href="/Manan_Garg_Resume.pdf" className="press btn-line" target="_blank" rel="noopener">
+              Resume (PDF)
+            </a>
+            <a href="#contact" className="press btn-line">
+              Contact
+            </a>
+          </motion.div>
+        </div>
+
+        <motion.div {...fade(0.35)} className="lg:col-span-6">
+          <FlightPanel />
+        </motion.div>
       </div>
 
-      <div className="grid md:grid-cols-12 gap-10 md:gap-6 items-end">
-        <motion.p
-          {...fade(0.5)}
-          className="md:col-span-6 font-serif text-2xl md:text-3xl leading-snug tracking-tight"
-        >
-          I build machine learning systems and the software around them: models for aerial imagery, and the APIs and interfaces that make them usable.
-        </motion.p>
-
-        <motion.dl {...fade(0.65)} className="md:col-span-5 md:col-start-8 text-sm">
-          {facts.map(([k, v]) => (
-            <div key={k} className="grid grid-cols-[6.5rem_1fr] gap-4 py-3 border-t border-rule last:border-b">
-              <dt className="font-mono text-xs uppercase tracking-wider text-muted pt-0.5">{k}</dt>
-              <dd className="leading-relaxed">{v}</dd>
-            </div>
-          ))}
-        </motion.dl>
-      </div>
-
-      <motion.div {...fade(0.8)} className="mt-12 flex gap-8 font-mono text-xs uppercase tracking-wider">
-        <a href="#projects" className="rule-link pb-1">See work ↓</a>
-        <a href="#contact" className="rule-link pb-1">Get in touch</a>
-      </motion.div>
+      <motion.dl {...fade(0.75)} className="mt-14 grid md:grid-cols-3 gap-x-8 text-sm">
+        {facts.map(([k, v]) => (
+          <div key={k} className="py-4 border-t border-rule">
+            <dt className="font-mono text-xs uppercase tracking-wider text-muted mb-1.5">{k}</dt>
+            <dd className="leading-relaxed">{v}</dd>
+          </div>
+        ))}
+      </motion.dl>
     </section>
   );
 }
