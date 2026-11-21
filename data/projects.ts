@@ -29,6 +29,8 @@ export interface Project {
   capabilities: Capability[];
   /** Case-study page; projects without one open in a dialog */
   href?: string;
+  /** Preview image shown in the project row */
+  thumb?: { src: string; alt: string; width: number; height: number };
   repo?: string;
 }
 
@@ -36,7 +38,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'dronecore',
     n: '01',
-    title: 'dronecore',
+    title: 'Autonomous drone software: dronecore',
     tag: 'Personal project · simulation and SITL, not yet flown',
     summary:
       'Onboard autonomy and validation engine for multirotors. It grades how well the aircraft knows where it is, detects sensor, motor and battery faults, estimates wind, and chooses between returning, diverting or landing, recording why. The same navigator flies a 6-DOF simulation and real PX4 and ArduPilot firmware in software-in-the-loop.',
@@ -45,6 +47,12 @@ export const PROJECTS: Project[] = [
     metrics: ['48/48 SITL demo runs', '17/17 SITL safety cases', '1,782 tests'],
     capabilities: ['Autonomy and decisions', 'State estimation', 'Planning and control', 'MAVLink, PX4, ArduPilot', 'Validation and testing'],
     href: '/work/dronecore',
+    thumb: {
+      src: '/dronecore/demo-2-urban.png',
+      alt: 'dronecore flying a simulated quadrotor over a mapped power line, avoiding an unmapped crane found by lidar',
+      width: 1280,
+      height: 720,
+    },
   },
   {
     id: 'cadastra',

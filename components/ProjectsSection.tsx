@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -29,6 +30,16 @@ function RowBody({ p, match }: { p: Project; match: boolean }) {
         <p className="leading-relaxed text-ink/80">{p.summary}</p>
         <p className="font-mono text-xs text-muted mt-4">{p.tech.join(' · ')}</p>
         <p className="font-mono text-xs mt-2">{p.metrics.join('  ·  ')}</p>
+        {p.thumb && (
+          <Image
+            src={p.thumb.src}
+            alt={p.thumb.alt}
+            width={p.thumb.width}
+            height={p.thumb.height}
+            sizes="(min-width: 768px) 420px, 100vw"
+            className="mt-5 w-full max-w-md h-auto rounded-sm border border-rule"
+          />
+        )}
       </div>
       <span aria-hidden className="md:col-span-1 md:text-right font-mono text-xs uppercase tracking-wider pt-2 text-muted group-hover:text-accent transition-colors">
         <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">{p.href ? 'Read →' : 'Open →'}</span>
