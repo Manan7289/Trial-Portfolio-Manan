@@ -4,26 +4,27 @@ import { SectionHead } from './ui/Section';
 import { Reveal, StaggerContainer, staggerItem } from './ui/InteractiveEffects';
 
 const skills: { group: string; items: string[] }[] = [
-  { group: 'Languages', items: ['Python', 'C++', 'Java', 'TypeScript / JavaScript'] },
-  { group: 'Machine learning', items: ['Deep learning', 'PyTorch', 'TensorFlow', 'Scikit-Learn', 'Computer vision', 'Pandas & NumPy'] },
-  { group: 'Tools', items: ['FastAPI & REST', 'Git & Linux', 'MLOps & AWS'] },
+  { group: 'Autonomy', items: ['MAVLink v2', 'PX4 and ArduPilot (SITL)', 'Kalman and complementary filters', 'A* planning', 'minimum-jerk trajectories', 'cascaded PID control', 'fault detection and recovery'] },
+  { group: 'Vision and ML', items: ['PyTorch', 'TensorFlow', 'scikit-learn', 'instance and semantic segmentation', 'monocular depth estimation', 'geospatial data'] },
+  { group: 'Languages', items: ['Python (primary)', 'C++', 'Java', 'TypeScript / JavaScript', 'SQL'] },
+  { group: 'Tools', items: ['Git and GitHub Actions', 'Linux and WSL2', 'pytest and mypy', 'FastAPI and Flask', 'three.js', 'AWS (Academy)'] },
 ];
 
 const practice = [
-  'Start from a real dataset or benchmark and build the whole path to a working API.',
-  'Practice algorithms in CodeChef contests and peer code reviews.',
-  'Pick up new frameworks quickly when a project needs them.',
+  'Say what the evidence is: simulated, software-in-the-loop, or flown. Nothing on this site has flown yet.',
+  'Measure against a baseline before calling a result good.',
+  'Write the failure cases down first, then make the system handle them.',
 ];
 
 export default function AboutSection() {
   return (
     <section className="py-24 w-full px-6 max-w-6xl mx-auto" id="about">
-      <SectionHead n="01" title="About" />
+      <SectionHead n="02" title="About" />
 
       <div className="grid md:grid-cols-12 gap-12 md:gap-8">
         <Reveal className="md:col-span-5">
           <h2 className="font-serif text-4xl md:text-5xl leading-[1.05] tracking-tight mb-8">
-            Computer science student, <em className="text-accent">applied</em> ML.
+            Computer science student, <em className="text-accent">autonomy</em> software.
           </h2>
           <p className="text-muted mb-1">B.Tech, Computer Science</p>
           <p className="font-serif text-xl mb-1">Bennett University</p>

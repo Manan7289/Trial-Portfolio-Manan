@@ -4,12 +4,12 @@ import { SectionHead } from './ui/Section';
 import { AnimatedHeading } from './ui/AnimatedText';
 import { Reveal } from './ui/InteractiveEffects';
 
-const EMAIL = 'Gargmanan7289@gmail.com';
+import { EMAIL, GITHUB, LINKEDIN, RESUME_PDF } from '@/data/site';
 
 const others = [
-  { href: 'https://github.com/Manan7289', label: 'GitHub', external: true },
-  { href: 'https://linkedin.com/in/manan-garg-85012b318', label: 'LinkedIn', external: true },
-  { href: 'tel:+919897848251', label: '+91 98978 48251' },
+  { href: RESUME_PDF, label: 'Resume (PDF)', external: true },
+  { href: GITHUB, label: 'GitHub', external: true },
+  { href: LINKEDIN, label: 'LinkedIn', external: true },
 ];
 
 export default function ContactSection() {
@@ -23,7 +23,7 @@ export default function ContactSection() {
 
       <Reveal className="grid md:grid-cols-12 gap-8 items-end">
         <p className="md:col-span-5 text-lg text-ink/80 leading-relaxed">
-          Happy to talk about internships, projects, or anything on this page. Email is the quickest way to reach me.
+          Looking for a 4–6 month robotics, UAV or autonomy software internship, in India or abroad. Email is the quickest way to reach me, including for access to the dronecore code.
         </p>
         <div className="md:col-span-7 md:text-right">
           <motion.a

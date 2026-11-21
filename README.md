@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Manan Garg: portfolio
 
-## Getting Started
+Personal portfolio for robotics and autonomy software roles. Live at <https://resume-one-woad-61.vercel.app/>.
 
-First, run the development server:
+Next.js 16 (App Router, fully static), React 19, TypeScript, Tailwind CSS 4, Framer Motion. No WebGL and no 3D
+library: the hero's flight replay is plain SVG driven by one `requestAnimationFrame` loop.
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # production build (webpack)
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Layout
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | What it is |
+|---|---|
+| `app/page.tsx` | home: hero, work, about, experience, contact |
+| `app/work/dronecore/page.tsx` | dronecore case study |
+| `app/robots.ts`, `app/sitemap.ts`, `app/opengraph-image.tsx` | crawler and link-preview metadata |
+| `components/FlightPanel.tsx` | isometric replay of a recorded SITL mission |
+| `components/work/` | project dialog and the CadastraAI and Depth Wizard demos |
+| `data/projects.ts` | project list and capability filter |
+| `data/flight-demo1.ts` | flight data for the replay (generated, see below) |
+| `data/site.ts` | site URL, email, resume and profile links |
+| `public/Manan_Garg_Resume.pdf` | resume served by the site |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Where the content comes from
 
-## Learn More
+Every figure on the site comes from a project's own records:
 
-To learn more about Next.js, take a look at the following resources:
+- **dronecore:** the signed evidence matrix and docs in the private dronecore repository (release 0.6.0).
+- **CadastraAI:** the README of `github.com/Manan7289/CADASTRALAI`.
+- **Depth Wizard:** the project README (benchmark table and height bands).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Simulated results are labelled as simulated everywhere.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`data/flight-demo1.ts` is a down-sampled copy of
+`results/sitl_autonomy/demo-1-complete-flight-ardupilot-1.json` from the dronecore repository: an ArduCopter 4.7.2
+software-in-the-loop run (signed record, commit `bf5401f`). To regenerate it, keep `t` and the non-null `pos` of
+each `log` row (rounded to 0.1), plus `events`, `metrics` and the `record` fields shown in the file's
+`FlightRecord` type.
 
-## Deploy on Vercel
+Changes, testing and known limitations are in [PROJECT_REVIEW_REPORT.md](PROJECT_REVIEW_REPORT.md).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Accessibility and motion
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Reduced motion: `MotionConfig reducedMotion="user"` covers every Framer Motion animation. The flight replay
+  shows the whole path without animating.
+- The replay has a pause button, and it stops when off-screen.
+- Project dialogs move focus inside, keep Tab inside, close on Escape and return focus to whatever opened them.
+- There is a skip link, and the site works with the keyboard at phone width (checked at 375 px).
