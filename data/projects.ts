@@ -18,7 +18,9 @@ export const CAPABILITIES = [
 export type Capability = (typeof CAPABILITIES)[number];
 
 export interface Project {
-  id: 'dronecore' | 'cadastra' | 'depth';
+  id: 'dronecore' | 'onboard-nav' | 'cadastra' | 'depth';
+  /** Shows a "Currently working on" badge on the row */
+  inProgress?: boolean;
   n: string;
   title: string;
   tag: string;
@@ -55,8 +57,21 @@ export const PROJECTS: Project[] = [
     },
   },
   {
-    id: 'cadastra',
+    id: 'onboard-nav',
     n: '02',
+    title: 'Onboard navigation: DC-Nav',
+    tag: 'Personal project · extends dronecore · design and build in progress',
+    inProgress: true,
+    summary:
+      'A GPS-denied onboard navigation stack for dronecore, built as ROS 2 Jazzy packages: visual-inertial fusion in a GTSAM factor graph, a rolling 3D obstacle map, place recognition for loop closure, satellite-tile geolocation to correct drift without GNSS, and an integrity supervisor that tells the flight controller how much to trust the estimate. It extends the stereo-inertial filter already in dronecore. Architecture is designed; implementation is under way and nothing has run on hardware yet.',
+    role: 'Personal project, Nov 2026 – present',
+    tech: ['ROS 2 Jazzy', 'C++', 'GTSAM', 'OpenCV', 'MAVLink', 'PX4 / ArduPilot'],
+    metrics: ['9 ROS 2 packages designed', 'Current filter: 0.05–0.14 m ATE on EuRoC', 'Not yet flown'],
+    capabilities: ['State estimation', 'Computer vision', 'MAVLink, PX4, ArduPilot', 'Autonomy and decisions'],
+  },
+  {
+    id: 'cadastra',
+    n: '03',
     title: 'CadastraAI',
     tag: 'Team ELAVI · Smart India Hackathon 2026, college round Rank 1',
     summary:
@@ -69,7 +84,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'depth',
-    n: '03',
+    n: '04',
     title: 'Depth Wizard',
     tag: 'Two-person team · Smart India Hackathon problem 26175',
     summary:

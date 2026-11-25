@@ -24,6 +24,12 @@ function RowBody({ p, match }: { p: Project; match: boolean }) {
           {p.title}
         </h3>
         <p className="font-mono text-xs uppercase tracking-wider text-muted mt-3">{p.tag}</p>
+        {p.inProgress && (
+          <p className="mt-3 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider border border-accent text-accent px-2 py-0.5 mr-2">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse motion-reduce:animate-none" />
+            Currently working on
+          </p>
+        )}
         {match && <p className="mt-3 inline-block font-mono text-[11px] uppercase tracking-wider bg-ink text-paper px-2 py-0.5">Matches</p>}
       </div>
       <div className="md:col-span-5">
@@ -42,7 +48,9 @@ function RowBody({ p, match }: { p: Project; match: boolean }) {
         )}
       </div>
       <span aria-hidden className="md:col-span-1 md:text-right font-mono text-xs uppercase tracking-wider pt-2 text-muted group-hover:text-accent transition-colors">
-        <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">{p.href ? 'Read →' : 'Open →'}</span>
+        {(p.href || DEMOS[p.id] || p.repo) && (
+          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">{p.href ? 'Read →' : 'Open →'}</span>
+        )}
       </span>
     </>
   );
@@ -102,6 +110,10 @@ export default function ProjectsSection() {
                 <Link href={p.href} className={rowClass}>
                   <RowBody p={p} match={match} />
                 </Link>
+              ) : !DEMOS[p.id] && !p.repo ? (
+                <div className="grid md:grid-cols-12 gap-x-8 gap-y-3 py-9 md:py-11 px-3 -mx-3">
+                  <RowBody p={p} match={match} />
+                </div>
               ) : (
                 <button type="button" onClick={() => setOpenId(p.id)} className={rowClass} aria-haspopup="dialog">
                   <RowBody p={p} match={match} />
