@@ -66,7 +66,7 @@ export const PROJECTS: Project[] = [
       'Lets the drone fly with GNSS off. A stereo-inertial error-state Kalman filter with an OpenCV front end estimates position onboard, an integrity guard grades the estimate and lands when vision is lost, and the result goes to ArduCopter as MAVLink ODOMETRY through ROS 2 Jazzy nodes, which also build a local obstacle map. Next: timing on a Raspberry Pi 5, a flight node for real hardware, and loop closure.',
     role: 'Personal project, Nov 2026 – present',
     tech: ['Python', 'NumPy', 'OpenCV', 'ROS 2 Jazzy', 'MAVLink', 'ArduPilot'],
-    metrics: ['0.05–0.14 m ATE on EuRoC', '5/5 GNSS-off SITL flights', '~9 ms filter per frame (laptop)'],
+    metrics: ['0.05–0.15 m ATE on EuRoC', '3/3 GNSS-off squares within 0.76 m (SITL, ROS 2)', '~6 ms estimator per frame (laptop)'],
     capabilities: ['State estimation', 'Computer vision', 'MAVLink, PX4, ArduPilot', 'Validation and testing'],
   },
   {
