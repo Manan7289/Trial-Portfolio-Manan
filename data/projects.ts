@@ -59,15 +59,15 @@ export const PROJECTS: Project[] = [
   {
     id: 'onboard-nav',
     n: '02',
-    title: 'Onboard navigation: DC-Nav',
-    tag: 'Personal project · extends dronecore · design and build in progress',
+    title: 'GPS-denied onboard navigation',
+    tag: 'Personal project · part of dronecore · simulation and SITL, not yet flown',
     inProgress: true,
     summary:
-      'A GPS-denied onboard navigation stack for dronecore, built as ROS 2 Jazzy packages: visual-inertial fusion in a GTSAM factor graph, a rolling 3D obstacle map, place recognition for loop closure, satellite-tile geolocation to correct drift without GNSS, and an integrity supervisor that tells the flight controller how much to trust the estimate. It extends the stereo-inertial filter already in dronecore. Architecture is designed; implementation is under way and nothing has run on hardware yet.',
+      'Lets the drone fly with GNSS off. A stereo-inertial error-state Kalman filter with an OpenCV front end estimates position onboard, an integrity guard grades the estimate and lands when vision is lost, and the result goes to ArduCopter as MAVLink ODOMETRY through ROS 2 Jazzy nodes, which also build a local obstacle map. Next: timing on a Raspberry Pi 5, a flight node for real hardware, and loop closure.',
     role: 'Personal project, Nov 2026 – present',
-    tech: ['ROS 2 Jazzy', 'C++', 'GTSAM', 'OpenCV', 'MAVLink', 'PX4 / ArduPilot'],
-    metrics: ['9 ROS 2 packages designed', 'Current filter: 0.05–0.14 m ATE on EuRoC', 'Not yet flown'],
-    capabilities: ['State estimation', 'Computer vision', 'MAVLink, PX4, ArduPilot', 'Autonomy and decisions'],
+    tech: ['Python', 'NumPy', 'OpenCV', 'ROS 2 Jazzy', 'MAVLink', 'ArduPilot'],
+    metrics: ['0.05–0.14 m ATE on EuRoC', '5/5 GNSS-off SITL flights', '~9 ms filter per frame (laptop)'],
+    capabilities: ['State estimation', 'Computer vision', 'MAVLink, PX4, ArduPilot', 'Validation and testing'],
   },
   {
     id: 'cadastra',
